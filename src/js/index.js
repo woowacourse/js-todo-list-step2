@@ -1,7 +1,10 @@
 const userCreateButton = document.querySelector('.user-create-button');
-const userList = document.getElementById("user-list");
+const userList = document.getElementById('user-list');
+const userDeleteButton = document.querySelector('.user-delete-button');
+
 userCreateButton.addEventListener('click', onUserCreateHandler);
 userList.addEventListener('click', onUserSelectHandler);
+userDeleteButton.addEventListener('click', onUserDeleteHandler);
 
 loadUserList();
 
@@ -72,4 +75,41 @@ function onUserSelectHandler(event) {
 
   item.classList.toggle("active");
   document.querySelector(".user-name").innerText = item.innerText;
+}
+
+function onUserDeleteHandler() {
+  let deleteUser = "";
+  for (let i = 0; i < userList.children.length; i++) {
+    if (userList.children[i].classList.contains("active")) {
+      deleteUser = userList.children[i];
+      break;
+    }
+  }
+
+  if (deleteUser === "") {
+    alert("삭제할 유저를 선택해 주세요.");
+    return;
+  }
+
+  if (deleteUser.classList.contains("basic")) {
+    alert("j.on 유저는 삭제할 수 없습니다.");
+    return;
+  }
+
+  if (!confirm(document.querySelector(".user-name").innerText + "을 삭제하시겠습니까?")) {
+    return;
+  }
+
+  fetch("https://js-todo-list-9ca3a.df.r.appspot.com/api/users/" + deleteUser.id, {
+    method: 'DELETE',
+  })
+    .then(data => {
+      if (!data.ok) {
+        throw new Error(data.status)
+      }
+      return data.json()
+    });
+  deleteUser.remove();
+  document.querySelector(".user-name").innerText = "j.on";
+  document.querySelector(".basic").classList.toggle("active");
 }
