@@ -1,4 +1,30 @@
-const onUserCreateHandler = () => {
+const userCreateButton = document.querySelector('.user-create-button');
+const userList = document.getElementById("user-list");
+userCreateButton.addEventListener('click', onUserCreateHandler);
+userList.addEventListener('click', onUserSelectHandler);
+
+loadUserList();
+
+function loadUserList() {
+  fetch("https://js-todo-list-9ca3a.df.r.appspot.com/api/users")
+    .then(data => {
+      if (!data.ok) {
+        throw new Error(data.status)
+      }
+      return data.json()
+    })
+    .then(data => {
+      for (let i = 0; i < data.length; i++) {
+        const buttonElement = document.createElement('button');
+        buttonElement.className = "ripple";
+        buttonElement.id = data[i]._id;
+        buttonElement.innerText = data[i].name;
+        userList.insertBefore(buttonElement, userList.children[1]);
+      }
+    });
+}
+
+function onUserCreateHandler() {
   const userName = prompt("추가하고 싶은 이름을 입력해주세요.");
   const newUser = {
     name: userName
@@ -31,31 +57,6 @@ const onUserCreateHandler = () => {
     });
 
 };
-
-const userCreateButton = document.querySelector('.user-create-button');
-userCreateButton.addEventListener('click', onUserCreateHandler);
-const userList = document.getElementById("user-list");
-userList.addEventListener('click', onUserSelectHandler);
-
-function loadUserList() {
-  fetch("https://js-todo-list-9ca3a.df.r.appspot.com/api/users")
-    .then(data => {
-      if (!data.ok) {
-        throw new Error(data.status)
-      }
-      return data.json()
-    })
-    .then(data => {
-      for (let i = 0; i < data.length; i++) {
-        const buttonElement = document.createElement('button');
-        buttonElement.className = "ripple";
-        buttonElement.id = data[i]._id;
-        buttonElement.innerText = data[i].name;
-        userList.insertBefore(buttonElement, userList.children[1]);
-      }
-    });
-}
-loadUserList();
 
 function onUserSelectHandler(event) {
   const item = event.target.closest('button');
