@@ -92,7 +92,10 @@ function onUserSelectHandler(event) {
         return;
       }
       for (let i = 0; i < data.length; i++) {
-        todoList.insertAdjacentHTML('beforeend', renderTodoItemTemplate(data[i].contents));
+        todoList.insertAdjacentHTML('beforeend', renderTodoItemTemplate(data[i]._id, data[i].contents));
+        if (data[i].isCompleted) {
+          todoList.children[i].classList.toggle("completed");
+        }
       }
     });
 }
@@ -134,15 +137,43 @@ function onUserDeleteHandler() {
   document.querySelector(".basic").classList.toggle("active");
 }
 
-function renderTodoItemTemplate(title) {
-  return ` <li>
+function renderTodoItemTemplate(id, title) {
+  return ` <li id=${id}>
   <div class="view">
-    <input class="toggle" type="checkbox" />
+    <input class="toggle" onclick="onToggleTodoItem(event)" type="checkbox" />
     <label class="label">${title}</label>
     <button class="destroy"></button>
   </div>
   <input class="edit" value=${title} />
 </li>`;
+}
+
+function onToggleTodoItem(event) {
+  let selectedUser = "";
+  for (let i = 0; i < userList.children.length; i++) {
+    if (userList.children[i].classList.contains("active")) {
+      selectedUser = userList.children[i];
+      break;
+    }
+  }
+
+  if (selectedUser === "") {
+    alert("todoItem을 Completed 상태로 만들 유저를 선택해 주세요.");
+    return;
+  }
+
+  const item = event.target;
+  fetch("https://js-todo-list-9ca3a.df.r.appspot.com/api/users/" + selectedUser.id + "/items/" +
+    item.parentElement.parentElement.id + "/toggle", {
+    method: 'PUT'
+  })
+    .then(data => {
+      if(!data.ok) {
+        return new Error(data.status);
+      }
+      item.parentElement.parentElement.classList.toggle("completed")
+      return data.json();
+    })
 }
 
 function onAddTodoHandler(event) {
@@ -184,7 +215,7 @@ function onAddTodoHandler(event) {
       return data.json();
     })
     .then(data => {
-      todoList.insertAdjacentHTML('beforeend', renderTodoItemTemplate(data.contents));
+      todoList.insertAdjacentHTML('beforeend', renderTodoItemTemplate(data._id, data.contents));
     })
   event.target.value = "";
 }
