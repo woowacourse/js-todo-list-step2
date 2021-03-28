@@ -143,7 +143,7 @@ function renderTodoItemTemplate(id, title) {
   return ` <li id=${id}>
   <div class="view">
     <input class="toggle" onclick="onToggleTodoItem(event)" type="checkbox" />
-    <label class="label">${title}</label>
+    <label class="label" ondblclick="onEditItem(event)">${title}</label>
     <button class="destroy" onclick="onDeleteItem(event)"></button>
   </div>
   <input class="edit" value=${title} />
@@ -170,12 +170,64 @@ function onToggleTodoItem(event) {
     method: 'PUT'
   })
     .then(data => {
-      if(!data.ok) {
+      if (!data.ok) {
         return new Error(data.status);
       }
       item.parentElement.parentElement.classList.toggle("completed")
       return data.json();
     })
+}
+
+function onEditItem(event) {
+  let selectedUser = "";
+  for (let i = 0; i < userList.children.length; i++) {
+    if (userList.children[i].classList.contains("active")) {
+      selectedUser = userList.children[i];
+      break;
+    }
+  }
+
+  if (selectedUser === "") {
+    alert("todoItem을 수정할 유저를 선택해 주세요.");
+    return;
+  }
+
+  const item = event.target;
+  item.parentElement.parentElement.classList.add("editing");
+
+  const input = document.querySelector(".edit")
+  input.addEventListener('keyup', function (e) {
+    if (e.key == 'Esc' || e.key == 'Escape') {
+      item.parentElement.parentElement.classList.remove("editing");
+    }
+
+    if (e.key == 'Enter') {
+      const newContent = {
+        contents: input.value
+      };
+
+      const option = {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(newContent)
+      };
+
+      fetch("https://js-todo-list-9ca3a.df.r.appspot.com/api/users/" + selectedUser.id +
+       "/items/" + item.parentElement.parentElement.id, option)
+      .then(data => {
+        if(!data.ok) {
+          return new Error(data.status);
+        }
+        return data.json();
+      })
+      .then(data => {
+        item.innerText = data.contents;
+        item.parentElement.parentElement.classList.remove("editing");
+      })
+    }
+  })
 }
 
 function onDeleteItem(event) {
@@ -197,13 +249,13 @@ function onDeleteItem(event) {
     item.parentElement.parentElement.id, {
     method: 'DELETE'
   })
-  .then(data => {
-    if(!data.ok) {
-      return new Error(data.status);
-    }
-    item.parentElement.parentElement.remove();
-    return data.json();
-  })
+    .then(data => {
+      if (!data.ok) {
+        return new Error(data.status);
+      }
+      item.parentElement.parentElement.remove();
+      return data.json();
+    })
 }
 
 function onAddTodoHandler(event) {
@@ -267,11 +319,11 @@ function onAllClearTodoHandler() {
   fetch("https://js-todo-list-9ca3a.df.r.appspot.com/api/users/" + selectedUser.id + "/items/", {
     method: 'DELETE'
   })
-  .then(data => {
-    if(!data.ok) {
-      return new Error(data.status);
-    }
-    todoList.innerHTML = '';
-    return data.json();
-  })
+    .then(data => {
+      if (!data.ok) {
+        return new Error(data.status);
+      }
+      todoList.innerHTML = '';
+      return data.json();
+    })
 }
