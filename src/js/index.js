@@ -3,11 +3,13 @@ const userList = document.getElementById('user-list');
 const todoList = document.querySelector('.todo-list');
 const userDeleteButton = document.querySelector('.user-delete-button');
 const todoInput = document.querySelector('.new-todo');
+const todoAllClearButton = document.querySelector(".clear-completed");
 
 userCreateButton.addEventListener('click', onUserCreateHandler);
 userList.addEventListener('click', onUserSelectHandler);
 userDeleteButton.addEventListener('click', onUserDeleteHandler);
-todoInput.addEventListener('keyup', onAddTodoHandler)
+todoInput.addEventListener('keyup', onAddTodoHandler);
+todoAllClearButton.addEventListener('click', onAllClearTodoHandler);
 
 loadUserList();
 
@@ -142,7 +144,7 @@ function renderTodoItemTemplate(id, title) {
   <div class="view">
     <input class="toggle" onclick="onToggleTodoItem(event)" type="checkbox" />
     <label class="label">${title}</label>
-    <button class="destroy"></button>
+    <button class="destroy" onclick="onDeleteItem(event)"></button>
   </div>
   <input class="edit" value=${title} />
 </li>`;
@@ -174,6 +176,34 @@ function onToggleTodoItem(event) {
       item.parentElement.parentElement.classList.toggle("completed")
       return data.json();
     })
+}
+
+function onDeleteItem(event) {
+  let selectedUser = "";
+  for (let i = 0; i < userList.children.length; i++) {
+    if (userList.children[i].classList.contains("active")) {
+      selectedUser = userList.children[i];
+      break;
+    }
+  }
+
+  if (selectedUser === "") {
+    alert("todoItem을 삭제할 유저를 선택해 주세요.");
+    return;
+  }
+
+  const item = event.target;
+  fetch("https://js-todo-list-9ca3a.df.r.appspot.com/api/users/" + selectedUser.id + "/items/" +
+    item.parentElement.parentElement.id, {
+    method: 'DELETE'
+  })
+  .then(data => {
+    if(!data.ok) {
+      return new Error(data.status);
+    }
+    item.parentElement.parentElement.remove();
+    return data.json();
+  })
 }
 
 function onAddTodoHandler(event) {
@@ -218,4 +248,30 @@ function onAddTodoHandler(event) {
       todoList.insertAdjacentHTML('beforeend', renderTodoItemTemplate(data._id, data.contents));
     })
   event.target.value = "";
+}
+
+function onAllClearTodoHandler() {
+  let selectedUser = "";
+  for (let i = 0; i < userList.children.length; i++) {
+    if (userList.children[i].classList.contains("active")) {
+      selectedUser = userList.children[i];
+      break;
+    }
+  }
+
+  if (selectedUser === "") {
+    alert("todoItem을 모두 삭제할 유저를 선택해 주세요.");
+    return;
+  }
+
+  fetch("https://js-todo-list-9ca3a.df.r.appspot.com/api/users/" + selectedUser.id + "/items/", {
+    method: 'DELETE'
+  })
+  .then(data => {
+    if(!data.ok) {
+      return new Error(data.status);
+    }
+    todoList.innerHTML = '';
+    return data.json();
+  })
 }
