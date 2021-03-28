@@ -2,10 +2,12 @@ const userCreateButton = document.querySelector('.user-create-button');
 const userList = document.getElementById('user-list');
 const todoList = document.querySelector('.todo-list');
 const userDeleteButton = document.querySelector('.user-delete-button');
+const todoInput = document.querySelector('.new-todo');
 
 userCreateButton.addEventListener('click', onUserCreateHandler);
 userList.addEventListener('click', onUserSelectHandler);
 userDeleteButton.addEventListener('click', onUserDeleteHandler);
+todoInput.addEventListener('keyup', onAddTodoHandler)
 
 loadUserList();
 
@@ -141,4 +143,48 @@ function renderTodoItemTemplate(title) {
   </div>
   <input class="edit" value=${title} />
 </li>`;
+}
+
+function onAddTodoHandler(event) {
+  const todo = event.target.value;
+  const newTodo = {
+    contents: todo
+  };
+
+  const option = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(newTodo)
+  };
+
+  let selectedUser = "";
+  for (let i = 0; i < userList.children.length; i++) {
+    if (userList.children[i].classList.contains("active")) {
+      selectedUser = userList.children[i];
+      break;
+    }
+  }
+
+  if (selectedUser === "") {
+    alert("todoItem을 추가할 유저를 선택해 주세요.");
+    return;
+  }
+
+  if (event.key !== 'Enter') {
+    return;
+  }
+
+  fetch("https://js-todo-list-9ca3a.df.r.appspot.com/api/users/" + selectedUser.id + "/items", option)
+    .then(data => {
+      if (!data.ok) {
+        return new Error(data.status);
+      }
+      return data.json();
+    })
+    .then(data => {
+      todoList.insertAdjacentHTML('beforeend', renderTodoItemTemplate(data.contents));
+    })
+  event.target.value = "";
 }
