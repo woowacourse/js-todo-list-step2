@@ -1,5 +1,6 @@
 const userCreateButton = document.querySelector('.user-create-button');
 const userList = document.getElementById('user-list');
+const todoList = document.querySelector('.todo-list');
 const userDeleteButton = document.querySelector('.user-delete-button');
 
 userCreateButton.addEventListener('click', onUserCreateHandler);
@@ -66,6 +67,7 @@ function onUserSelectHandler(event) {
   if (item === null || (!item.classList.contains("basic") && item.id === "")) {
     return;
   }
+  todoList.innerHTML = '';
 
   for (let i = 0; i < userList.children.length; i++) {
     if (userList.children[i].classList.contains("active")) {
@@ -75,6 +77,22 @@ function onUserSelectHandler(event) {
 
   item.classList.toggle("active");
   document.querySelector(".user-name").innerText = item.innerText;
+
+  fetch("https://js-todo-list-9ca3a.df.r.appspot.com/api/users/" + item.id + "/items")
+    .then(data => {
+      if (!data.ok) {
+        return new Error(data.status);
+      }
+      return data.json();
+    })
+    .then(data => {
+      if (data.length === 0) {
+        return;
+      }
+      for (let i = 0; i < data.length; i++) {
+        todoList.insertAdjacentHTML('beforeend', renderTodoItemTemplate(data[i].contents));
+      }
+    });
 }
 
 function onUserDeleteHandler() {
@@ -112,4 +130,15 @@ function onUserDeleteHandler() {
   deleteUser.remove();
   document.querySelector(".user-name").innerText = "j.on";
   document.querySelector(".basic").classList.toggle("active");
+}
+
+function renderTodoItemTemplate(title) {
+  return ` <li>
+  <div class="view">
+    <input class="toggle" type="checkbox" />
+    <label class="label">${title}</label>
+    <button class="destroy"></button>
+  </div>
+  <input class="edit" value=${title} />
+</li>`;
 }
