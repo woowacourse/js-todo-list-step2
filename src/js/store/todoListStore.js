@@ -5,7 +5,6 @@ const todoListStore = [];
 const EMPTY_STRING = "";
 
 function deepCopyStore() {
-    console.log(todoListStore);
     return JSON.parse(JSON.stringify(todoListStore));
 }
 
