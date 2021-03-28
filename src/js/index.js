@@ -33,7 +33,12 @@ function loadUserList() {
 }
 
 function onUserCreateHandler() {
-  const userName = prompt("추가하고 싶은 이름을 입력해주세요.");
+  const userName = prompt("추가하고 싶은 이름을 입력해 주세요.");
+  if (userName.length < 2) {
+    alert("2자 이상의 이름을 입력해 주세요!");
+    return;
+  }
+
   const newUser = {
     name: userName
   };
@@ -215,17 +220,17 @@ function onEditItem(event) {
       };
 
       fetch("https://js-todo-list-9ca3a.df.r.appspot.com/api/users/" + selectedUser.id +
-       "/items/" + item.parentElement.parentElement.id, option)
-      .then(data => {
-        if(!data.ok) {
-          return new Error(data.status);
-        }
-        return data.json();
-      })
-      .then(data => {
-        item.innerText = data.contents;
-        item.parentElement.parentElement.classList.remove("editing");
-      })
+        "/items/" + item.parentElement.parentElement.id, option)
+        .then(data => {
+          if (!data.ok) {
+            return new Error(data.status);
+          }
+          return data.json();
+        })
+        .then(data => {
+          item.innerText = data.contents;
+          item.parentElement.parentElement.classList.remove("editing");
+        })
     }
   })
 }
@@ -260,18 +265,6 @@ function onDeleteItem(event) {
 
 function onAddTodoHandler(event) {
   const todo = event.target.value;
-  const newTodo = {
-    contents: todo
-  };
-
-  const option = {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(newTodo)
-  };
-
   let selectedUser = "";
   for (let i = 0; i < userList.children.length; i++) {
     if (userList.children[i].classList.contains("active")) {
@@ -288,6 +281,23 @@ function onAddTodoHandler(event) {
   if (event.key !== 'Enter') {
     return;
   }
+
+  if (todo.length < 2) {
+    alert("2자 이상의 할 일을 입력해 주세요!");
+    return;
+  }
+
+  const newTodo = {
+    contents: todo
+  };
+
+  const option = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(newTodo)
+  };
 
   fetch("https://js-todo-list-9ca3a.df.r.appspot.com/api/users/" + selectedUser.id + "/items", option)
     .then(data => {
