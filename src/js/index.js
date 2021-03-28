@@ -200,13 +200,19 @@ function onEditItem(event) {
   const item = event.target;
   item.parentElement.parentElement.classList.add("editing");
 
-  const input = document.querySelector(".edit")
+  const input = item.parentElement.parentElement.children[1];
   input.addEventListener('keyup', function (e) {
     if (e.key == 'Esc' || e.key == 'Escape') {
       item.parentElement.parentElement.classList.remove("editing");
     }
 
     if (e.key == 'Enter') {
+      if (input.value.length < 2) {
+        alert("2자 이상의 할 일을 입력해 주세요!");
+        item.parentElement.parentElement.classList.remove("editing");
+        return;
+      }
+
       const newContent = {
         contents: input.value
       };
