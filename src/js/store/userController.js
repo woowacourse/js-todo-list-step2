@@ -5,8 +5,8 @@ export {addUser, getUsers};
 
 const $userList = document.querySelector('#user-list');
 
-async function addUser(userName) {
-    await addUserFetch(userName);
+function addUser(userName) {
+    addUserFetch(userName);
     getUsers();
 }
 

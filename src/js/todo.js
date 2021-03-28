@@ -1,10 +1,9 @@
 import {execute, renderTodoList} from './store/todoListStoreAccessor.js';
-import {addUser, getUsers} from "./store/userController.js";
 
 const $todoInput = document.querySelector(".new-todo");
 const $toggleParentList = document.querySelector(".todo-list");
 const $filterList = document.querySelector(".filters");
-const $userCreateButton = document.querySelector('.user-create-button')
+
 
 const EMPTY_STRING = "";
 
@@ -15,14 +14,6 @@ $toggleParentList.addEventListener("click", onClickTodoItem);
 $toggleParentList.addEventListener("dblclick", onEditModeTodoItem);
 
 $filterList.addEventListener("click", onClickFilter);
-$userCreateButton.addEventListener('click', onUserCreateHandler)
-
-getUsers();
-
-function onUserCreateHandler() {
-    const userName = prompt("추가하고 싶은 이름을 입력해주세요.");
-    addUser(userName);
-}
 
 function onAddTodoItem(event) {
     const todoTitle = event.target.value;
