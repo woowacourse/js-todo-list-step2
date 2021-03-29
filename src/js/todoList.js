@@ -16,8 +16,24 @@ const todoTemplate = (todo) => {
             </li>`
 }
 
+const loadingTodo = `<li>
+              <div class="view">
+                <label class="label">
+                  <div class="animated-background">
+                    <div class="skel-mask-container">
+                      <div class="skel-mask"></div>
+                    </div>
+                  </div>
+                </label>
+              </div>
+            </li>`;
+
 const todoList = document.querySelector(".todo-list");
 
 export const updateTodoList = (todos) => {
   todoList.innerHTML = todos.map(todo => todoTemplate(todo)).join("");
+}
+
+export const addLoadingTodo = () => {
+  todoList.insertAdjacentHTML("beforeend", loadingTodo);
 }

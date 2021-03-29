@@ -75,15 +75,17 @@ const onInputNewTodoHandler = async (event) => {
       alert("내용은 2자 이상이어야 합니다.");
       return;
     }
+    todoList.addLoadingTodo();
+    const valueToAdd = event.target.value;
+    event.target.value = "";
     const response = await fetch(baseApiUrl + "/" + selectedUserId + "/items", {
       headers: {
         "Content-Type": "application/json"
       },
       method: "POST",
-      body: JSON.stringify({"contents": event.target.value})
+      body: JSON.stringify({"contents": valueToAdd})
     })
     const result = await response.json();
-    event.target.value = "";
     getTodosById(selectedUserId).push(result);
     todoList.updateTodoList(getTodosById(selectedUserId));
   }
@@ -113,7 +115,7 @@ const onTodoDeleteHandler = (event) => {
         .filter(todo => todo["_id"] !== selectedTodoId);
     todoList.updateTodoList(getTodosById(selectedUserId));
 
-    fetch(baseApiUrl+"/"+selectedUserId+"/items/"+selectedTodoId, {
+    fetch(baseApiUrl + "/" + selectedUserId + "/items/" + selectedTodoId, {
       method: "DELETE"
     }).then();
   }
