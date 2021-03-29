@@ -121,6 +121,38 @@ const onTodoDeleteHandler = (event) => {
   }
 }
 
+const onEditTodoHandler = (event) => {
+  if (event.target && event.target.classList.contains("label")) {
+    const selectedRow = event.target.closest("li");
+    selectedRow.setAttribute("class", "editing");
+  }
+}
+
+const onFinishToEditTodoHandler = ({target, key}) => {
+  if (target.value && key === "Enter") {
+    if (target.value.length < userNameCountMin) {
+      alert("내용은 2자 이상이어야 합니다.");
+      return;
+    }
+    const selectedTodoId = target.closest("li").id;
+    getTodosById(selectedUserId).find(todo => todo["_id"] === selectedTodoId)["contents"] = target.value;
+    todoList.updateTodoList(getTodosById(selectedUserId));
+    fetch(baseApiUrl + "/" + selectedUserId + "/items/" + selectedTodoId, {
+      headers: {
+        "Content-Type": "application/json"
+      },
+      method: "PUT",
+      body: JSON.stringify({"contents": target.value})
+    }).then();
+    return;
+  }
+  if (key === "Escape") {
+    const selectedRow = target.closest("li");
+    selectedRow.classList.remove("editing");
+    todoList.updateTodoList(getTodosById(selectedUserId));
+  }
+}
+
 document.querySelector('.user-create-button').addEventListener('click',
     onUserCreateHandler)
 document.querySelector(".user-delete-button").addEventListener('click',
@@ -129,8 +161,11 @@ document.querySelector(".users").addEventListener('click', onSelectUserHandler);
 document.querySelector(".new-todo").addEventListener("keyup",
     onInputNewTodoHandler);
 document.querySelector(".main").addEventListener("click", onCompleteHandler);
-
 document.querySelector(".main").addEventListener("click", onTodoDeleteHandler);
+
+document.querySelector(".main").addEventListener("dblclick", onEditTodoHandler);
+
+document.querySelector(".main").addEventListener("keyup", onFinishToEditTodoHandler);
 
 window.onload = () => {
   loadData().then(() => {
