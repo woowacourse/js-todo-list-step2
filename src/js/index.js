@@ -19,6 +19,10 @@ const getTodosById = (id) => {
   return users.find(user => user["_id"] === id)["todoList"];
 }
 
+const getUserById = (id) => {
+  return users.find(user => user["_id"] === id);
+}
+
 const isValidName = (name) => {
   if (name === null) {
     return false;
@@ -86,16 +90,31 @@ const onInputNewTodoHandler = async (event) => {
 }
 
 const onCompleteHandler = (event) => {
-  if (event.target && event.target.getAttribute("class") === "toggle") {
+  if (event.target && event.target.classList.contains("toggle")) {
     const selectedTodoId = event.target.closest("li").id;
     const todosById = getTodosById(selectedUserId);
-    const toggledTodoIndex = todosById.findIndex(todo => todo["_id"] === selectedTodoId);
+    const toggledTodoIndex = todosById.findIndex(
+        todo => todo["_id"] === selectedTodoId);
     todosById[toggledTodoIndex]["isCompleted"] = !todosById[toggledTodoIndex]["isCompleted"];
     todoList.updateTodoList(todosById);
 
     fetch(baseApiUrl + "/" + selectedUserId + "/items/" + selectedTodoId
         + "/toggle", {
       method: "PUT"
+    }).then();
+  }
+}
+
+const onTodoDeleteHandler = (event) => {
+  if (event.target && event.target.classList.contains("destroy")) {
+    const selectedTodoId = event.target.closest("li").id;
+    getUserById(selectedUserId)["todoList"] =
+        getUserById(selectedUserId)["todoList"]
+        .filter(todo => todo["_id"] !== selectedTodoId);
+    todoList.updateTodoList(getTodosById(selectedUserId));
+
+    fetch(baseApiUrl+"/"+selectedUserId+"/items/"+selectedTodoId, {
+      method: "DELETE"
     }).then();
   }
 }
@@ -108,6 +127,8 @@ document.querySelector(".users").addEventListener('click', onSelectUserHandler);
 document.querySelector(".new-todo").addEventListener("keyup",
     onInputNewTodoHandler);
 document.querySelector(".main").addEventListener("click", onCompleteHandler);
+
+document.querySelector(".main").addEventListener("click", onTodoDeleteHandler);
 
 window.onload = () => {
   loadData().then(() => {
