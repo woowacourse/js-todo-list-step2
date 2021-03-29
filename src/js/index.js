@@ -27,9 +27,10 @@ async function loadUserList() {
         buttonElement.className = "ripple";
         buttonElement.id = data[i]._id;
         buttonElement.innerText = data[i].name;
-        userList.insertBefore(buttonElement, userList.children[0]);
+        userList.children.add
+        userList.insertBefore(buttonElement, userList.children[userList.children.length - 2]);
       }
-      document.querySelector(".user-name").innerText = data[data.length - 1].name;
+      document.querySelector(".user-name").innerText = data[0].name;
       userList.children[0].classList.toggle("active");
     });
 }
@@ -65,7 +66,7 @@ async function onUserCreateHandler() {
       buttonElement.className = "ripple";
       buttonElement.id = data._id;
       buttonElement.innerText = data.name;
-      userList.insertBefore(buttonElement, userCreateButton);
+      userList.insertBefore(buttonElement, userList.children[userList.children.length - 2]);
     })
     .catch(error => {
       console.log(error)
@@ -266,6 +267,11 @@ async function onDeleteItem(event) {
 
 async function onAddTodoHandler(event) {
   const todo = event.target.value;
+
+  if (event.key !== 'Enter') {
+    return;
+  }
+
   let selectedUser = "";
   for (let i = 0; i < userList.children.length; i++) {
     if (userList.children[i].classList.contains("active")) {
@@ -276,10 +282,6 @@ async function onAddTodoHandler(event) {
 
   if (selectedUser === "") {
     alert("todoItem을 추가할 유저를 선택해 주세요.");
-    return;
-  }
-
-  if (event.key !== 'Enter') {
     return;
   }
 
