@@ -41,6 +41,10 @@ body {
   display: none;
 }
 
+.users {
+  display: inline;
+}
+
 #app {
   margin-top: 100px;
 }
