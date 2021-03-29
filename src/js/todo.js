@@ -4,6 +4,7 @@ import {currentUserId} from "./user.js";
 const $todoInput = document.querySelector(".new-todo");
 const $toggleParentList = document.querySelector(".todo-list");
 const $filterList = document.querySelector(".filters");
+const $clearButton = document.querySelector(".clear-completed");
 
 const EMPTY_STRING = "";
 
@@ -12,13 +13,14 @@ $todoInput.addEventListener("keyup", onAddTodoItem);
 $toggleParentList.addEventListener("keyup", onEditTodoItem)
 $toggleParentList.addEventListener("click", onClickTodoItem);
 $toggleParentList.addEventListener("dblclick", onEditModeTodoItem);
+$clearButton.addEventListener('click', onRemoveTodoItemAll);
 
 $filterList.addEventListener("click", onClickFilter);
 
 function onAddTodoItem(event) {
     const todoTitle = event.target.value;
     if (event.key === "Enter" && todoTitle !== "") {
-        execute("add", {userId: currentUserId(), title: todoTitle}, getState());
+        execute("add", {userId: currentUserId(), contents: todoTitle}, getState());
         event.target.value = EMPTY_STRING;
     }
 }
@@ -28,9 +30,15 @@ function onClickTodoItem(event) {
     onRemoveTodoItem(event);
 }
 
+function onRemoveTodoItemAll(){
+    execute("deleteAll", {userId: currentUserId()})
+}
 function onRemoveTodoItem(event) {
     if (event.target && event.target.className === "destroy") {
-        execute("delete", {id: getOnEventClosestTodoItemId(event)}, getState(), currentUserId);
+        execute("delete", {
+            userId: currentUserId(),
+            todoId: getOnEventClosestTodoItemId(event)
+        }, getState());
     }
 }
 
@@ -43,7 +51,7 @@ function onEditTodoItem(event) {
         const todoTitle = event.target.value;
 
         if (event.key === "Enter" && todoTitle !== "") {
-            execute("update", {id: getOnEventClosestTodoItemId(event), title: todoTitle}, getState(), currentUserId);
+            execute("update", {id: getOnEventClosestTodoItemId(event), contents: todoTitle}, getState(), currentUserId);
         } else if (event.key === "Escape") {
             renderTodoList(getState());
         }
@@ -56,7 +64,7 @@ function getOnEventClosestTodoItemId(event) {
 
 function onToggleTodoItem(event) {
     if (event.target && event.target.className === "toggle") {
-        execute("toggle", {todoId: getOnEventClosestTodoItemId(event), userId:currentUserId()}, getState());
+        execute("toggle", {todoId: getOnEventClosestTodoItemId(event), userId: currentUserId()}, getState());
     }
 }
 

@@ -1,5 +1,6 @@
 import userListTemplate from "../template/userListTemplate.js";
 import {addUserFetch, deleteUserFetch, getUsersFetch} from "../fetch/userFetch.js";
+import {execute} from "./todoListStoreAccessor.js";
 
 export {addUser, getUsers, deleteUser};
 
@@ -12,20 +13,20 @@ async function addUser(userName) {
 
 async function deleteUser(userId) {
     await deleteUserFetch(userId);
+    execute("clear");
     getUsers();
 }
 
 function getUsers(addedUserId) {
-    getUsersFetch().then(userList => renderUserList(userList, addedUserId));
+    return getUsersFetch().then(userList => renderUserList(userList, addedUserId));
 }
 
 function renderUserList(users, addedUserId) {
     $userList.querySelectorAll('.user-button').forEach(ele => ele.remove());
     users.forEach(user => {
+        $userList.insertAdjacentHTML('afterbegin', userListTemplate(user._id, user.name))
         if (user._id === addedUserId) {
-            $userList.insertAdjacentHTML('afterbegin', userListTemplate(user._id, user.name, true))
-        } else {
-            $userList.insertAdjacentHTML('afterbegin', userListTemplate(user._id, user.name))
+            document.querySelector(`#${user._id}`).click();
         }
     })
 }

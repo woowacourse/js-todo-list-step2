@@ -32,17 +32,17 @@
 - [x] 3. User 삭제하기
 - [x] 3. todoItem 추가하기
 - [x] 4. todoItem 불러오기
-- [ ] 5. todoItem complete하기
-- [ ] 6. todoItem 삭제하기
+- [x] 5. todoItem complete하기
+- [x] 6. todoItem 삭제하기
 - [ ] 7. todoItem contents 내용 수정하기
 
 <br/>
 
 ## 🎯🎯 심화 요구사항
 
-- [ ] 1. fetch api 사용하는 부분을 async await을 사용하여 리팩토링하기.
+- [x] 1. fetch api 사용하는 부분을 async await을 사용하여 리팩토링하기.
 - [ ] 2. github issue에서 라벨을 붙이는 것처럼, 우선순위에 따라서 label를 추가하기.
-- [ ] 3. ES6 impot & export를 이용해 자바스크립트 파일을 리팩토링하기.
+- [x] 3. ES6 impot & export를 이용해 자바스크립트 파일을 리팩토링하기.
 
 <br/>
 

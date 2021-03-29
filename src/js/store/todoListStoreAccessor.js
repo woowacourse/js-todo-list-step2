@@ -1,8 +1,10 @@
 import {
     addTodoItem,
+    clear,
     deepCopyStore,
     getTodoItems,
     removeTodoItem,
+    removeTodoItemAll,
     toggleStateTodoItem,
     updateTodoItem
 } from './todoListStore.js';
@@ -13,7 +15,7 @@ export {execute, renderTodoList}
 
 const EMPTY_STRING = "";
 
-async function execute(command, {userId, todoId, title}, state) {
+async function execute(command, {userId, todoId, contents} = {}, state) {
     const loadingBar = document.querySelector('#loading-bar');
     loadingBar.style.display = 'block';
 
@@ -22,19 +24,25 @@ async function execute(command, {userId, todoId, title}, state) {
             await getTodoItems(userId);
             break;
         case "add" :
-            await addTodoItem(userId, title);
+            await addTodoItem(userId, contents);
+            break;
+        case "clear" :
+            clear();
             break;
         case "update" :
-            updateTodoItem(id, title);
+            updateTodoItem(todoId, contents);
             break;
         case "delete" :
-            removeTodoItem(userId, todoId);
+            await removeTodoItem(userId, todoId);
+            break;
+        case "deleteAll" :
+            await removeTodoItemAll(userId);
             break;
         case "toggle" :
             await toggleStateTodoItem(userId, todoId);
             break;
         default :
-            throw `가능한 명령 : add, update, delete, toggle / 입력된 명령: ${command}`;
+            throw `가능한 명령 : add, get, clear, update, delete, toggle / 입력된 명령: ${command}`;
     }
 
     renderTodoList(state);
@@ -55,7 +63,7 @@ function renderTodoList(state) {
             </li>`;
 
     visibleTotoList(state).forEach(
-        item => todoListElement.insertAdjacentHTML("beforeend", itemTemplate(item.id, item.title, item.state))
+        item => todoListElement.insertAdjacentHTML("beforeend", itemTemplate(item.id, item.contents, item.state))
     )
 
     const countContainerElement = document.querySelector(".count-container");

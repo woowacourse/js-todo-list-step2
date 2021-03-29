@@ -13,7 +13,7 @@ function deleteAllTodoFetch(userId) {
 }
 
 function deleteEachTodoFetch(userId, itemId) {
-    return postFetch(`/api/users/${userId}/items/${itemId}`)
+    return deleteFetch(`/api/users/${userId}/items/${itemId}`)
         .then(response => response.json())
 }
 
