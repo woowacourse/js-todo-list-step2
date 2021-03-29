@@ -1,5 +1,5 @@
 export {addTodoItem, updateTodoItem, removeTodoItem, findById, toggleStateTodoItem, getTodoItems, deepCopyStore}
-import {addTodoFetch, getTodoFetch} from "../fetch/todoFetch.js";
+import {addTodoFetch, getTodoFetch, toggleItem} from "../fetch/todoFetch.js";
 
 let todoListStore = [];
 
@@ -42,6 +42,10 @@ function findById(id) {
     }
 }
 
+function indexOfId(id) {
+    return todoListStore.findIndex(item => item.id === id);
+}
+
 function removeTodoItem(id) {
     const index = todoListStore.findIndex(item => item.id === id);
     if (index !== -1) {
@@ -51,11 +55,8 @@ function removeTodoItem(id) {
     }
 }
 
-function toggleStateTodoItem(id) {
-    const element = findById(id);
-    if (element.state === "completed") {
-        element.state = "active";
-    } else {
-        element.state = "completed";
-    }
+async function toggleStateTodoItem(userId, todoId) {
+    const toggledUser = await toggleItem(userId, todoId);
+    const userIndex = indexOfId(todoId);
+    todoListStore[userIndex] = createTodoItem(toggledUser._id, toggledUser.contents, toggledUser.isCompleted);
 }

@@ -1,4 +1,11 @@
-import {addTodoItem, deepCopyStore, removeTodoItem, toggleStateTodoItem, getTodoItems,updateTodoItem} from './todoListStore.js';
+import {
+    addTodoItem,
+    deepCopyStore,
+    getTodoItems,
+    removeTodoItem,
+    toggleStateTodoItem,
+    updateTodoItem
+} from './todoListStore.js';
 import itemTemplate from "../template/todoItemTemplate.js";
 import countTemplate from "../template/todoCountTemplate.js";
 
@@ -6,25 +13,25 @@ export {execute, renderTodoList}
 
 const EMPTY_STRING = "";
 
-async function execute(command, {id, title}, state) {
+async function execute(command, {userId, todoId, title}, state) {
     const loadingBar = document.querySelector('#loading-bar');
     loadingBar.style.display = 'block';
 
     switch (command) {
         case "get" :
-            await getTodoItems(id);
+            await getTodoItems(userId);
             break;
         case "add" :
-            await addTodoItem(id, title);
+            await addTodoItem(userId, title);
             break;
         case "update" :
             updateTodoItem(id, title);
             break;
         case "delete" :
-            removeTodoItem(id);
+            removeTodoItem(userId, todoId);
             break;
         case "toggle" :
-            toggleStateTodoItem(id);
+            await toggleStateTodoItem(userId, todoId);
             break;
         default :
             throw `가능한 명령 : add, update, delete, toggle / 입력된 명령: ${command}`;

@@ -18,7 +18,7 @@ $filterList.addEventListener("click", onClickFilter);
 function onAddTodoItem(event) {
     const todoTitle = event.target.value;
     if (event.key === "Enter" && todoTitle !== "") {
-        execute("add", {id: currentUserId(), title: todoTitle}, getState());
+        execute("add", {userId: currentUserId(), title: todoTitle}, getState());
         event.target.value = EMPTY_STRING;
     }
 }
@@ -56,7 +56,7 @@ function getOnEventClosestTodoItemId(event) {
 
 function onToggleTodoItem(event) {
     if (event.target && event.target.className === "toggle") {
-        execute("toggle", {id: getOnEventClosestTodoItemId(event)}, getState(), currentUserId);
+        execute("toggle", {todoId: getOnEventClosestTodoItemId(event), userId:currentUserId()}, getState());
     }
 }
 

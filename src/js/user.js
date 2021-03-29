@@ -25,7 +25,7 @@ async function onUserSelectHandler(event) {
         const buttons = event.target.closest('#user-list').querySelectorAll('.user-button');
         buttons.forEach(btn => btn.classList.remove('active'))
         event.target.classList.add('active');
-        execute("get", {id: currentUserId()})
+        execute("get", {userId: currentUserId()})
     }
 }
 

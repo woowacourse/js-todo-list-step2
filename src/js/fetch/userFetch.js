@@ -1,6 +1,5 @@
-import postFetch from "./postFetch.js";
-import deleteFetch from "./deleteFetch.js";
-import getFetch from "./getFetch.js";
+import {deleteFetch, getFetch, postFetch} from "./methodFetches.js";
+
 
 export {addUserFetch, getUsersFetch, deleteUserFetch}
 

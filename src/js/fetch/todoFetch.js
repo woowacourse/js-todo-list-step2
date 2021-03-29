@@ -1,6 +1,4 @@
-import postFetch from "./postFetch.js";
-import deleteFetch from "./deleteFetch.js";
-import getFetch from "./getFetch.js";
+import {deleteFetch, getFetch, postFetch, putFetch} from "./methodFetches.js";
 
 export {addTodoFetch, deleteAllTodoFetch, deleteEachTodoFetch, toggleItem, updateEachTodoFetch, getTodoFetch}
 
@@ -25,8 +23,8 @@ function updateEachTodoFetch(userId, itemId, updateContents) {
 }
 
 function toggleItem(userId, itemId) {
-    // return postFetch(`/api/users/${userId}/items/${itemId}/toggle`, {method: 'PUT'})
-    //     .then(response => response.json())
+    return putFetch(`/api/users/${userId}/items/${itemId}/toggle`, {method: 'PUT'})
+        .then(response => response.json())
 }
 
 function addTodoFetch(userId, contents) {
