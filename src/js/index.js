@@ -4,18 +4,20 @@ const onUserCreateHandler = () => {
   userList.addUser();
 }
 
+function onUserDeleteHandler() {
+  userList.deleteUser();
+}
+
 const onSelectUserHandler = (event) => {
   if (event.target && event.target.tagName === "BUTTON") {
     userList.updateTodoList(event.target.id);
   }
 }
-const userCreateButton = document.querySelector('.user-create-button')
 
-userCreateButton.addEventListener('click', onUserCreateHandler)
+document.querySelector('.user-create-button').addEventListener('click', onUserCreateHandler)
 
-const $userList = document.querySelector(".users");
-
-$userList.addEventListener('click', onSelectUserHandler);
+document.querySelector(".user-delete-button").addEventListener('click', onUserDeleteHandler)
+document.querySelector(".users").addEventListener('click', onSelectUserHandler);
 
 window.onload = () => {
   userList.loadData().then(

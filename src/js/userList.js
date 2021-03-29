@@ -1,12 +1,12 @@
 import * as todoList from "./todoList.js";
 
 const userNameCountMin = 2;
+
 const baseApiUrl = "https://js-todo-list-9ca3a.df.r.appspot.com/api/users";
 const userButtonTemplate = (name, id) => `<button class="ripple" id=${id}>${name}</button>`;
-
 let selectedUserId = "";
-let users = [];
 
+let users = [];
 const $userList = document.querySelector(".users");
 
 export const loadData = async () => {
@@ -20,6 +20,7 @@ export const loadData = async () => {
 }
 
 export const updateTodoList = (id) => {
+  selectedUserId = id;
   document.querySelector("button.active").classList.remove("active");
   document.getElementById(id).classList.add("active");
   todoList.updateTodoList(users.find(user => user["_id"] === id)["todoList"]);
@@ -30,22 +31,41 @@ export const updateUserList = () => {
   document.getElementById(selectedUserId).classList.add("active");
 }
 
+const isValidName = (name) => {
+  if (name === null) {
+    return false;
+  }
+  if (name.length < userNameCountMin) {
+    alert(userNameCountMin + "자 이상의 이름을 입력해주세요.");
+    return false;
+  }
+  return true;
+}
+
 export const addUser = () => {
   const userName = prompt("추가하고 싶은 이름을 입력해주세요.");
-  if (userName === null) {
-    return;
+  if (isValidName(userName)) {
+    fetch(baseApiUrl, {
+      headers: {
+        "Content-Type": "application/json"
+      },
+      method: "POST",
+      body: JSON.stringify({name: userName})
+    }).then(() => {
+      loadData().then(updateUserList)
+    });
   }
-  if (userName.length < userNameCountMin) {
-    alert(userNameCountMin + "자 이상의 이름을 입력해주세요.");
-    return;
-  }
-  fetch(baseApiUrl,{
-    headers: {
-      "Content-Type": "application/json"
-    },
-    method: "POST",
-    body: JSON.stringify({name: userName})
+}
+
+export const deleteUser = () => {
+  fetch(baseApiUrl + "/" + selectedUserId, {
+    method: "DELETE"
   }).then(() => {
-    loadData().then(updateUserList)
+    selectedUserId = "";
+    loadData().then(() => {
+      updateUserList();
+      console.log(selectedUserId);
+      updateTodoList(selectedUserId);
+    });
   });
 }
