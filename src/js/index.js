@@ -2,6 +2,9 @@ const API_URL = 'https://js-todo-list-9ca3a.df.r.appspot.com/api/users';
 
 const userList = document.getElementById("user-list");
 const userCreateButton = document.querySelector('.user-create-button')
+const userDeleteButton = document.querySelector('.user-delete-button')
+
+var staticUserObj;
 
 function loadAllUserFromServer() {
   fetch(API_URL)
@@ -10,12 +13,14 @@ function loadAllUserFromServer() {
     })
     .then(data => {
       var userObj = data;
+      staticUserObj = userObj;
       showAllUser(userObj);
     });
 }
 
 function showAllUser(userObj) {
   for (let i = 0; i < userObj.length; i++) {
+    console.log(userObj[i])
     showSingleUser(i, userObj[i].name);
   }
 }
@@ -47,42 +52,78 @@ const onUserCreateHandler = () => {
       },
       body: JSON.stringify(newUser)
     }
-    console.log(postOption)
 
-    saveNewUserToServer(postOption);
-    //async처리...? 바로되는데?
-    var activeUser = document.getElementsByClassName("active")[0];
-    activeUser.removeAttribute("class");
-    activeUser.setAttribute("class", "ripple");
-
-    var user = document.createElement("button");
-    user.setAttribute("class", "ripple active");
-    user.innerText = userName;
-    userList.insertBefore(user, userCreateButton);
-
+    saveNewUserToServer(postOption, userName);
+  
   } else {
     alert("사용자 이름은 최소 2자 이상이여야 합니다.");
   }
 }
 
-
-function saveNewUserToServer(postOption) {
+function saveNewUserToServer(postOption, userName) {
   fetch(API_URL, postOption)
-  .then(data => {
-    if (!data.ok) {
-      throw new Error(data.status);
-    }
-    return data.json();
-  })
-  .then(post => {
-    console.log(post);
-  })
-  .catch(error => {
-    console.log(error);
-    alert("서버와의 통신 실패!");
-  })
+    .then(data => {
+      if (!data.ok) {
+        throw new Error(data.status);
+      }
+      return data.json();
+    })
+    .then(post => {
+      console.log(post);
+      staticUserObj.push(post);
+      addNewUserToUI(userName);
+    })
+    .catch(error => {
+      console.log(error);
+      alert("서버와의 통신 실패!");
+    })
 }
 
-userCreateButton.addEventListener('click', onUserCreateHandler)
+function addNewUserToUI(userName) {
+  var activeUser = document.getElementsByClassName("active")[0];
+  activeUser.removeAttribute("class");
+  activeUser.setAttribute("class", "ripple");
 
+  var user = document.createElement("button");
+  user.setAttribute("class", "ripple active");
+  user.innerText = userName;
+  userList.insertBefore(user, userCreateButton);
+}
+
+const onUserDeleteHandler = () => {
+  var userToBeDeleted = document.getElementsByClassName("active")[0];
+  if (confirm(userToBeDeleted.innerHTML + "를 삭제하시겠습니까?")) {
+    for (let i = 0; i < staticUserObj.length; i++) {
+      if (staticUserObj[i].name == userToBeDeleted.innerHTML) {
+        deleteUser("/"+staticUserObj[i]._id, userToBeDeleted);
+      }
+    }
+  }
+}
+
+function deleteUser(userID, userToBeDeleted) {
+  const deleteOption = {
+    method: 'DELETE',
+  }
+
+  fetch(API_URL + userID, deleteOption)
+    .then(data => {
+      if (!data.ok) {
+        throw new Error(data.status);
+      }
+      return data.json();
+    })
+    .then(post => {
+      console.log(post);
+      userToBeDeleted.remove();
+    })
+    .catch(error => {
+      console.log(error);
+      alert("서버와의 통신 실패!");
+    })
+}
+
+
+userCreateButton.addEventListener('click', onUserCreateHandler);
+userDeleteButton.addEventListener('click', onUserDeleteHandler);
 loadAllUserFromServer();
