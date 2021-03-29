@@ -1,7 +1,7 @@
 const todoTemplate = (todo) => {
   return `<li ${todo["isCompleted"] ? `class="completed"` : ``} id = ${todo["_id"]}>
               <div class="view">
-                <input class="toggle" type="checkbox" />
+                <input class="toggle" type="checkbox" ${todo["isCompleted"] ? `checked` : ``}/>
                 <label class="label">
                   <select class="chip select">
                     <option value="0" selected>순위</option>

@@ -71,7 +71,7 @@ const onInputNewTodoHandler = async (event) => {
       alert("내용은 2자 이상이어야 합니다.");
       return;
     }
-    const response = await fetch(baseApiUrl+"/"+selectedUserId+"/items", {
+    const response = await fetch(baseApiUrl + "/" + selectedUserId + "/items", {
       headers: {
         "Content-Type": "application/json"
       },
@@ -85,15 +85,33 @@ const onInputNewTodoHandler = async (event) => {
   }
 }
 
-document.querySelector('.user-create-button').addEventListener('click', onUserCreateHandler)
-document.querySelector(".user-delete-button").addEventListener('click', onUserDeleteHandler)
-document.querySelector(".users").addEventListener('click', onSelectUserHandler);
-document.querySelector(".new-todo").addEventListener("keyup", onInputNewTodoHandler);
+const onCompleteHandler = (event) => {
+  if (event.target && event.target.getAttribute("class") === "toggle") {
+    const selectedTodoId = event.target.closest("li").id;
+    const todosById = getTodosById(selectedUserId);
+    const toggledTodoIndex = todosById.findIndex(todo => todo["_id"] === selectedTodoId);
+    todosById[toggledTodoIndex]["isCompleted"] = !todosById[toggledTodoIndex]["isCompleted"];
+    todoList.updateTodoList(todosById);
 
+    fetch(baseApiUrl + "/" + selectedUserId + "/items/" + selectedTodoId
+        + "/toggle", {
+      method: "PUT"
+    }).then();
+  }
+}
+
+document.querySelector('.user-create-button').addEventListener('click',
+    onUserCreateHandler)
+document.querySelector(".user-delete-button").addEventListener('click',
+    onUserDeleteHandler)
+document.querySelector(".users").addEventListener('click', onSelectUserHandler);
+document.querySelector(".new-todo").addEventListener("keyup",
+    onInputNewTodoHandler);
+document.querySelector(".main").addEventListener("click", onCompleteHandler);
 
 window.onload = () => {
   loadData().then(() => {
-      userList.updateUserList(users, selectedUserId);
-      todoList.updateTodoList(getTodosById(selectedUserId));
+    userList.updateUserList(users, selectedUserId);
+    todoList.updateTodoList(getTodosById(selectedUserId));
   });
 }

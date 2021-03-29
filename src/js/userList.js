@@ -1,5 +1,3 @@
-
-
 const userButtonTemplate = (name, id) => `<button class="ripple" id=${id}>${name}</button>`;
 
 const $userList = document.querySelector(".users");
