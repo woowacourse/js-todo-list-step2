@@ -50,15 +50,15 @@ const onUserCreateHandler = async () => {
   }
 }
 
-function onUserDeleteHandler() {
+async function onUserDeleteHandler() {
   const idToRemove = selectedUserId;
   users = users.filter(user => user["_id"] !== selectedUserId);
   selectedUserId = users[0]["_id"];
   userList.updateUserList(users, selectedUserId);
   todoList.updateTodoList(getTodosById(selectedUserId));
-  fetch(baseApiUrl + "/" + idToRemove, {
+  await fetch(baseApiUrl + "/" + idToRemove, {
     method: "DELETE"
-  }).then();
+  });
 }
 
 const onSelectUserHandler = (event) => {
@@ -91,7 +91,7 @@ const onInputNewTodoHandler = async (event) => {
   }
 }
 
-const onCompleteHandler = (event) => {
+const onCompleteHandler = async (event) => {
   if (event.target && event.target.classList.contains("toggle")) {
     const selectedTodoId = event.target.closest("li").id;
     const todosById = getTodosById(selectedUserId);
@@ -100,14 +100,14 @@ const onCompleteHandler = (event) => {
     todosById[toggledTodoIndex]["isCompleted"] = !todosById[toggledTodoIndex]["isCompleted"];
     todoList.updateTodoList(todosById);
 
-    fetch(baseApiUrl + "/" + selectedUserId + "/items/" + selectedTodoId
+    await fetch(baseApiUrl + "/" + selectedUserId + "/items/" + selectedTodoId
         + "/toggle", {
       method: "PUT"
-    }).then();
+    });
   }
 }
 
-const onTodoDeleteHandler = (event) => {
+const onTodoDeleteHandler = async (event) => {
   if (event.target && event.target.classList.contains("destroy")) {
     const selectedTodoId = event.target.closest("li").id;
     getUserById(selectedUserId)["todoList"] =
@@ -115,9 +115,9 @@ const onTodoDeleteHandler = (event) => {
         .filter(todo => todo["_id"] !== selectedTodoId);
     todoList.updateTodoList(getTodosById(selectedUserId));
 
-    fetch(baseApiUrl + "/" + selectedUserId + "/items/" + selectedTodoId, {
+    await fetch(baseApiUrl + "/" + selectedUserId + "/items/" + selectedTodoId, {
       method: "DELETE"
-    }).then();
+    });
   }
 }
 
@@ -128,7 +128,7 @@ const onEditTodoHandler = (event) => {
   }
 }
 
-const onFinishToEditTodoHandler = ({target, key}) => {
+const onFinishToEditTodoHandler = async ({target, key}) => {
   if (target.value && key === "Enter") {
     if (target.value.length < userNameCountMin) {
       alert("내용은 2자 이상이어야 합니다.");
@@ -137,13 +137,13 @@ const onFinishToEditTodoHandler = ({target, key}) => {
     const selectedTodoId = target.closest("li").id;
     getTodosById(selectedUserId).find(todo => todo["_id"] === selectedTodoId)["contents"] = target.value;
     todoList.updateTodoList(getTodosById(selectedUserId));
-    fetch(baseApiUrl + "/" + selectedUserId + "/items/" + selectedTodoId, {
+    await fetch(baseApiUrl + "/" + selectedUserId + "/items/" + selectedTodoId, {
       headers: {
         "Content-Type": "application/json"
       },
       method: "PUT",
       body: JSON.stringify({"contents": target.value})
-    }).then();
+    });
     return;
   }
   if (key === "Escape") {
@@ -162,14 +162,11 @@ document.querySelector(".new-todo").addEventListener("keyup",
     onInputNewTodoHandler);
 document.querySelector(".main").addEventListener("click", onCompleteHandler);
 document.querySelector(".main").addEventListener("click", onTodoDeleteHandler);
-
 document.querySelector(".main").addEventListener("dblclick", onEditTodoHandler);
-
 document.querySelector(".main").addEventListener("keyup", onFinishToEditTodoHandler);
 
-window.onload = () => {
-  loadData().then(() => {
-    userList.updateUserList(users, selectedUserId);
-    todoList.updateTodoList(getTodosById(selectedUserId));
-  });
+window.onload = async () => {
+  await loadData()
+  userList.updateUserList(users, selectedUserId);
+  todoList.updateTodoList(getTodosById(selectedUserId));
 }
