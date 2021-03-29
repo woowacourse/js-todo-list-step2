@@ -30,7 +30,7 @@ async function execute(command, {userId, todoId, contents} = {}, state) {
             clear();
             break;
         case "update" :
-            updateTodoItem(todoId, contents);
+            await updateTodoItem(userId, todoId, contents);
             break;
         case "delete" :
             await removeTodoItem(userId, todoId);

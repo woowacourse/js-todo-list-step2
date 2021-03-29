@@ -20,8 +20,12 @@ function postFetch(url, body = {}) {
     });
 }
 
-function putFetch(url){
+function putFetch(url, body = {}) {
     return fetch(`https://js-todo-list-9ca3a.df.r.appspot.com${url}`, {
-        method: "put"
+        method: "put",
+        body: JSON.stringify(body),
+        headers: {
+            'Content-Type': 'application/json'
+        }
     });
 }

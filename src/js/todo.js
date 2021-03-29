@@ -51,7 +51,7 @@ function onEditTodoItem(event) {
         const todoTitle = event.target.value;
 
         if (event.key === "Enter" && todoTitle !== "") {
-            execute("update", {id: getOnEventClosestTodoItemId(event), contents: todoTitle}, getState(), currentUserId);
+            execute("update", {userId: currentUserId(), todoId: getOnEventClosestTodoItemId(event), contents: todoTitle}, getState());
         } else if (event.key === "Escape") {
             renderTodoList(getState());
         }

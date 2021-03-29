@@ -18,8 +18,8 @@ function deleteEachTodoFetch(userId, itemId) {
 }
 
 function updateEachTodoFetch(userId, itemId, updateContents) {
-    // return postFetch(`/api/users/${userId}/items/${itemId}`, {method: 'PUT', body: {contents: `${updateContents}`}})
-    //    .then(response => response.json())
+    return putFetch(`/api/users/${userId}/items/${itemId}`, {contents: `${updateContents}`})
+        .then(response => response.json())
 }
 
 function toggleItem(userId, itemId) {
