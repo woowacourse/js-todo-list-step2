@@ -1,5 +1,7 @@
-import getElseFetch from "./getElseFetch.js";
+import postFetch from "./postFetch.js";
+import deleteFetch from "./deleteFetch.js";
 import getFetch from "./getFetch.js";
+
 export {addUserFetch, getUsersFetch, deleteUserFetch}
 
 function getUsersFetch() {
@@ -7,13 +9,12 @@ function getUsersFetch() {
         .then(response => response.json())
 }
 
-function deleteUserFetch(_id) {
-    return getElseFetch(`/api/users/${_id}`, {method: 'DELETE'})
-        .then(response => response.json())
+function deleteUserFetch(id) {
+    return deleteFetch(`/api/users/${id}`)
 }
 
-async function addUserFetch(userName) {
-    await getElseFetch('/api/users', {method: "POST", body: {name: `${userName}`}})
+function addUserFetch(userName) {
+    return postFetch('/api/users', {name: `${userName}`})
         .then(response => response.json())
 }
 

@@ -1,9 +1,9 @@
 import {execute, renderTodoList} from './store/todoListStoreAccessor.js';
+import {currentUserId} from "./user.js";
 
 const $todoInput = document.querySelector(".new-todo");
 const $toggleParentList = document.querySelector(".todo-list");
 const $filterList = document.querySelector(".filters");
-
 
 const EMPTY_STRING = "";
 
@@ -18,7 +18,7 @@ $filterList.addEventListener("click", onClickFilter);
 function onAddTodoItem(event) {
     const todoTitle = event.target.value;
     if (event.key === "Enter" && todoTitle !== "") {
-        execute("add", {id: Date.now(), title: todoTitle}, getState());
+        execute("add", {id: currentUserId(), title: todoTitle}, getState());
         event.target.value = EMPTY_STRING;
     }
 }
@@ -30,7 +30,7 @@ function onClickTodoItem(event) {
 
 function onRemoveTodoItem(event) {
     if (event.target && event.target.className === "destroy") {
-        execute("delete", {id: getOnEventClosestTodoItemId(event)}, getState());
+        execute("delete", {id: getOnEventClosestTodoItemId(event)}, getState(), currentUserId);
     }
 }
 
@@ -43,7 +43,7 @@ function onEditTodoItem(event) {
         const todoTitle = event.target.value;
 
         if (event.key === "Enter" && todoTitle !== "") {
-            execute("update", {id: getOnEventClosestTodoItemId(event), title: todoTitle}, getState());
+            execute("update", {id: getOnEventClosestTodoItemId(event), title: todoTitle}, getState(), currentUserId);
         } else if (event.key === "Escape") {
             renderTodoList(getState());
         }
@@ -56,7 +56,7 @@ function getOnEventClosestTodoItemId(event) {
 
 function onToggleTodoItem(event) {
     if (event.target && event.target.className === "toggle") {
-        execute("toggle", {id: getOnEventClosestTodoItemId(event)}, getState());
+        execute("toggle", {id: getOnEventClosestTodoItemId(event)}, getState(), currentUserId);
     }
 }
 
@@ -65,7 +65,7 @@ function onClickFilter(event) {
         const $filterItems = event.target.closest(".filters").querySelectorAll("li>a");
         $filterItems.forEach(item => item.classList.remove("selected"));
         event.target.classList.add("selected");
-        renderTodoList(getState());
+        renderTodoList(getState(), currentUserId);
     }
 }
 

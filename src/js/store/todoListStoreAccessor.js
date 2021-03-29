@@ -6,10 +6,10 @@ export {execute, renderTodoList}
 
 const EMPTY_STRING = "";
 
-function execute(command, {id, title}, state) {
+async function execute(command, {id, title}, state) {
     switch (command) {
         case "add" :
-            addTodoItem(id, title);
+            await addTodoItem(id, title);
             break;
         case "update" :
             updateTodoItem(id, title);

@@ -1,4 +1,5 @@
 export {addTodoItem, updateTodoItem, removeTodoItem, findById, toggleStateTodoItem, deepCopyStore}
+import {addTodoFetch} from "../fetch/todoFetch.js";
 
 const todoListStore = [];
 
@@ -8,12 +9,18 @@ function deepCopyStore() {
     return JSON.parse(JSON.stringify(todoListStore));
 }
 
-function createTodoItem(id, title = EMPTY_STRING, state = "active") {
-    return {id: `i-${id}`, title: title, state: state}
+function createTodoItem(id, title = EMPTY_STRING, isComplete = false) {
+    let state = "active";
+    if (isComplete) {
+        state = "completed";
+    }
+    return {id: id, title: title, state: state}
 }
 
+
 function addTodoItem(id, title = EMPTY_STRING) {
-    todoListStore.push(createTodoItem(id, title));
+    return addTodoFetch(id, title)
+        .then(data => todoListStore.push(createTodoItem(data._id, data.contents, data.isComplete)));
 }
 
 function updateTodoItem(id, insert = EMPTY_STRING) {
