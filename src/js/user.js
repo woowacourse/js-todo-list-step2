@@ -1,4 +1,5 @@
 import {addUser, deleteUser, getUsers} from "./store/userController.js";
+import {execute} from "./store/todoListStoreAccessor.js";
 
 export {currentUserId}
 const $userCreateButton = document.querySelector('.user-create-button')
@@ -19,15 +20,15 @@ function onUserCreateHandler() {
     addUser(userName);
 }
 
-function onUserSelectHandler(event) {
+async function onUserSelectHandler(event) {
     if (event.target && event.target.classList.contains("user-button")) {
         const buttons = event.target.closest('#user-list').querySelectorAll('.user-button');
         buttons.forEach(btn => btn.classList.remove('active'))
         event.target.classList.add('active');
+        execute("get", {id: currentUserId()})
     }
 }
 
 function onUserDeleteHandle(event) {
-    console.log(currentUserId());
     deleteUser(currentUserId());
 }

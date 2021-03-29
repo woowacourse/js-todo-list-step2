@@ -1,7 +1,7 @@
-export {addTodoItem, updateTodoItem, removeTodoItem, findById, toggleStateTodoItem, deepCopyStore}
-import {addTodoFetch} from "../fetch/todoFetch.js";
+export {addTodoItem, updateTodoItem, removeTodoItem, findById, toggleStateTodoItem, getTodoItems, deepCopyStore}
+import {addTodoFetch, getTodoFetch} from "../fetch/todoFetch.js";
 
-const todoListStore = [];
+let todoListStore = [];
 
 const EMPTY_STRING = "";
 
@@ -21,6 +21,13 @@ function createTodoItem(id, title = EMPTY_STRING, isComplete = false) {
 function addTodoItem(id, title = EMPTY_STRING) {
     return addTodoFetch(id, title)
         .then(data => todoListStore.push(createTodoItem(data._id, data.contents, data.isComplete)));
+}
+
+function getTodoItems(userId) {
+    todoListStore = [];
+    return getTodoFetch(userId)
+        .then(todos =>
+            todos.forEach(todo => todoListStore.push(createTodoItem(todo._id, todo.contents, todo.isComplete))));
 }
 
 function updateTodoItem(id, insert = EMPTY_STRING) {

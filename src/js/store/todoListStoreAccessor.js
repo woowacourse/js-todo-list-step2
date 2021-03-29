@@ -1,4 +1,4 @@
-import {addTodoItem, deepCopyStore, removeTodoItem, toggleStateTodoItem, updateTodoItem} from './todoListStore.js';
+import {addTodoItem, deepCopyStore, removeTodoItem, toggleStateTodoItem, getTodoItems,updateTodoItem} from './todoListStore.js';
 import itemTemplate from "../template/todoItemTemplate.js";
 import countTemplate from "../template/todoCountTemplate.js";
 
@@ -11,6 +11,9 @@ async function execute(command, {id, title}, state) {
     loadingBar.style.display = 'block';
 
     switch (command) {
+        case "get" :
+            await getTodoItems(id);
+            break;
         case "add" :
             await addTodoItem(id, title);
             break;
