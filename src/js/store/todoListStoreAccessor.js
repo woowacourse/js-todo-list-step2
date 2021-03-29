@@ -7,6 +7,9 @@ export {execute, renderTodoList}
 const EMPTY_STRING = "";
 
 async function execute(command, {id, title}, state) {
+    const loadingBar = document.querySelector('#loading-bar');
+    loadingBar.style.display = 'block';
+
     switch (command) {
         case "add" :
             await addTodoItem(id, title);
@@ -23,13 +26,14 @@ async function execute(command, {id, title}, state) {
         default :
             throw `가능한 명령 : add, update, delete, toggle / 입력된 명령: ${command}`;
     }
+
     renderTodoList(state);
 }
 
 function renderTodoList(state) {
     const todoListElement = document.querySelector(".todo-list");
     todoListElement.innerHTML = `<li>
-              <div class="view">
+              <div id="loading-bar" class="view" style="display:none">
                 <label class="label">
                   <div class="animated-background">
                     <div class="skel-mask-container">
@@ -39,6 +43,7 @@ function renderTodoList(state) {
                 </label>
               </div>
             </li>`;
+
     visibleTotoList(state).forEach(
         item => todoListElement.insertAdjacentHTML("beforeend", itemTemplate(item.id, item.title, item.state))
     )
