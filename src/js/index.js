@@ -13,8 +13,8 @@ todoAllClearButton.addEventListener('click', onAllClearTodoHandler);
 
 loadUserList();
 
-function loadUserList() {
-  fetch("https://js-todo-list-9ca3a.df.r.appspot.com/api/users")
+async function loadUserList() {
+  await fetch("https://js-todo-list-9ca3a.df.r.appspot.com/api/users")
     .then(data => {
       if (!data.ok) {
         throw new Error(data.status)
@@ -27,12 +27,14 @@ function loadUserList() {
         buttonElement.className = "ripple";
         buttonElement.id = data[i]._id;
         buttonElement.innerText = data[i].name;
-        userList.insertBefore(buttonElement, userList.children[1]);
+        userList.insertBefore(buttonElement, userList.children[0]);
       }
+      document.querySelector(".user-name").innerText = data[data.length - 1].name;
+      userList.children[0].classList.toggle("active");
     });
 }
 
-function onUserCreateHandler() {
+async function onUserCreateHandler() {
   const userName = prompt("추가하고 싶은 이름을 입력해 주세요.");
   if (userName.length < 2) {
     alert("2자 이상의 이름을 입력해 주세요!");
@@ -51,7 +53,7 @@ function onUserCreateHandler() {
     body: JSON.stringify(newUser)
   };
 
-  fetch("https://js-todo-list-9ca3a.df.r.appspot.com/api/users", option)
+  await fetch("https://js-todo-list-9ca3a.df.r.appspot.com/api/users", option)
     .then(data => {
       if (!data.ok) {
         throw new Error(data.status)
@@ -71,9 +73,9 @@ function onUserCreateHandler() {
 
 };
 
-function onUserSelectHandler(event) {
+async function onUserSelectHandler(event) {
   const item = event.target.closest('button');
-  if (item === null || (!item.classList.contains("basic") && item.id === "")) {
+  if (item === null || item.id === "") {
     return;
   }
   todoList.innerHTML = '';
@@ -87,7 +89,7 @@ function onUserSelectHandler(event) {
   item.classList.toggle("active");
   document.querySelector(".user-name").innerText = item.innerText;
 
-  fetch("https://js-todo-list-9ca3a.df.r.appspot.com/api/users/" + item.id + "/items")
+  await fetch("https://js-todo-list-9ca3a.df.r.appspot.com/api/users/" + item.id + "/items")
     .then(data => {
       if (!data.ok) {
         return new Error(data.status);
@@ -107,7 +109,7 @@ function onUserSelectHandler(event) {
     });
 }
 
-function onUserDeleteHandler() {
+async function onUserDeleteHandler() {
   let deleteUser = "";
   for (let i = 0; i < userList.children.length; i++) {
     if (userList.children[i].classList.contains("active")) {
@@ -121,16 +123,11 @@ function onUserDeleteHandler() {
     return;
   }
 
-  if (deleteUser.classList.contains("basic")) {
-    alert("j.on 유저는 삭제할 수 없습니다.");
-    return;
-  }
-
   if (!confirm(document.querySelector(".user-name").innerText + "을 삭제하시겠습니까?")) {
     return;
   }
 
-  fetch("https://js-todo-list-9ca3a.df.r.appspot.com/api/users/" + deleteUser.id, {
+  await fetch("https://js-todo-list-9ca3a.df.r.appspot.com/api/users/" + deleteUser.id, {
     method: 'DELETE',
   })
     .then(data => {
@@ -140,8 +137,6 @@ function onUserDeleteHandler() {
       return data.json()
     });
   deleteUser.remove();
-  document.querySelector(".user-name").innerText = "j.on";
-  document.querySelector(".basic").classList.toggle("active");
 }
 
 function renderTodoItemTemplate(id, title) {
@@ -155,7 +150,7 @@ function renderTodoItemTemplate(id, title) {
 </li>`;
 }
 
-function onToggleTodoItem(event) {
+async function onToggleTodoItem(event) {
   let selectedUser = "";
   for (let i = 0; i < userList.children.length; i++) {
     if (userList.children[i].classList.contains("active")) {
@@ -170,7 +165,7 @@ function onToggleTodoItem(event) {
   }
 
   const item = event.target;
-  fetch("https://js-todo-list-9ca3a.df.r.appspot.com/api/users/" + selectedUser.id + "/items/" +
+  await fetch("https://js-todo-list-9ca3a.df.r.appspot.com/api/users/" + selectedUser.id + "/items/" +
     item.parentElement.parentElement.id + "/toggle", {
     method: 'PUT'
   })
@@ -201,7 +196,7 @@ function onEditItem(event) {
   item.parentElement.parentElement.classList.add("editing");
 
   const input = item.parentElement.parentElement.children[1];
-  input.addEventListener('keyup', function (e) {
+  input.addEventListener('keyup', async function (e) {
     if (e.key == 'Esc' || e.key == 'Escape') {
       item.parentElement.parentElement.classList.remove("editing");
     }
@@ -225,7 +220,7 @@ function onEditItem(event) {
         body: JSON.stringify(newContent)
       };
 
-      fetch("https://js-todo-list-9ca3a.df.r.appspot.com/api/users/" + selectedUser.id +
+      await fetch("https://js-todo-list-9ca3a.df.r.appspot.com/api/users/" + selectedUser.id +
         "/items/" + item.parentElement.parentElement.id, option)
         .then(data => {
           if (!data.ok) {
@@ -241,7 +236,7 @@ function onEditItem(event) {
   })
 }
 
-function onDeleteItem(event) {
+async function onDeleteItem(event) {
   let selectedUser = "";
   for (let i = 0; i < userList.children.length; i++) {
     if (userList.children[i].classList.contains("active")) {
@@ -256,7 +251,7 @@ function onDeleteItem(event) {
   }
 
   const item = event.target;
-  fetch("https://js-todo-list-9ca3a.df.r.appspot.com/api/users/" + selectedUser.id + "/items/" +
+  await fetch("https://js-todo-list-9ca3a.df.r.appspot.com/api/users/" + selectedUser.id + "/items/" +
     item.parentElement.parentElement.id, {
     method: 'DELETE'
   })
@@ -269,7 +264,7 @@ function onDeleteItem(event) {
     })
 }
 
-function onAddTodoHandler(event) {
+async function onAddTodoHandler(event) {
   const todo = event.target.value;
   let selectedUser = "";
   for (let i = 0; i < userList.children.length; i++) {
@@ -305,7 +300,7 @@ function onAddTodoHandler(event) {
     body: JSON.stringify(newTodo)
   };
 
-  fetch("https://js-todo-list-9ca3a.df.r.appspot.com/api/users/" + selectedUser.id + "/items", option)
+  await fetch("https://js-todo-list-9ca3a.df.r.appspot.com/api/users/" + selectedUser.id + "/items", option)
     .then(data => {
       if (!data.ok) {
         return new Error(data.status);
@@ -318,7 +313,7 @@ function onAddTodoHandler(event) {
   event.target.value = "";
 }
 
-function onAllClearTodoHandler() {
+async function onAllClearTodoHandler() {
   let selectedUser = "";
   for (let i = 0; i < userList.children.length; i++) {
     if (userList.children[i].classList.contains("active")) {
@@ -332,7 +327,7 @@ function onAllClearTodoHandler() {
     return;
   }
 
-  fetch("https://js-todo-list-9ca3a.df.r.appspot.com/api/users/" + selectedUser.id + "/items/", {
+  await fetch("https://js-todo-list-9ca3a.df.r.appspot.com/api/users/" + selectedUser.id + "/items/", {
     method: 'DELETE'
   })
     .then(data => {
