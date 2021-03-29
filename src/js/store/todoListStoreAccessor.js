@@ -13,8 +13,6 @@ import countTemplate from "../template/todoCountTemplate.js";
 
 export {execute, renderTodoList}
 
-const EMPTY_STRING = "";
-
 async function execute(command, {userId, todoId, contents} = {}, state) {
     const loadingBar = document.querySelector('#loading-bar');
     loadingBar.style.display = 'block';
@@ -24,12 +22,14 @@ async function execute(command, {userId, todoId, contents} = {}, state) {
             await getTodoItems(userId);
             break;
         case "add" :
+            validateContentsLength(contents);
             await addTodoItem(userId, contents);
             break;
         case "clear" :
             clear();
             break;
         case "update" :
+            validateContentsLength(contents);
             await updateTodoItem(userId, todoId, contents);
             break;
         case "delete" :
@@ -46,6 +46,15 @@ async function execute(command, {userId, todoId, contents} = {}, state) {
     }
 
     renderTodoList(state);
+}
+
+function validateContentsLength(contents) {
+    if (contents.length < 2) {
+        alert("컨텐츠 길이는 2자 이상이어야 합니다!");
+        const loadingBar = document.querySelector('#loading-bar');
+        loadingBar.style.display = 'none';
+        throw "contents length error";
+    }
 }
 
 function renderTodoList(state) {
