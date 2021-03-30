@@ -1,4 +1,4 @@
-import * as userCreateButton from './userCreateButton.js';
+import * as userCreateButton from './UserCreateButtonComponent.js';
 import * as UserComponent from './UserComponent.js';
 import * as service from '../../service.js';
 

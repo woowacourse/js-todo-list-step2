@@ -1,4 +1,4 @@
-import * as userList from './component/userList/userList.js';
+import * as userList from './component/userList/UserListComponent.js';
 
 // 초기 이벤트 설정하기
 (function() {
