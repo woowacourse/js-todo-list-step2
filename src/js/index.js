@@ -18,9 +18,41 @@ userList.addEventListener('click', function(e) {
   }
 })
 
-function updateTodoListByUser(userName) {
+todoList.addEventListener('click', function (e) {
+  if (e.target && e.target.nodeName == "INPUT") {
+    var currentUser = getCurrentUserObj();
+    var chosenTodo = (e.target.parentNode.getElementsByClassName("label")[0].innerText)
+    console.log(chosenTodo + "--" + currentUser.todoList);
+    for (let i = 0; i < currentUser.todoList.length; i++) {
+      console.log(chosenTodo + "--" + currentUser.todoList[i].contents);
+      if (chosenTodo.includes(currentUser.todoList[i].contents)) {
+        var userID = currentUser._id //현재 유저아이디
+        var itemID = currentUser.todoList[i]._id // 아이템 아이디
+        fetch(API_URL + "/" + userID + "/items/" + itemID + "/toggle", { method: 'PUT' })
+          .then(data => {
+            if (!data.ok) {
+              throw new Error(data.status);
+            }
+            return data.json();
+          })
+          .then(post => {
+            var completeButton = e.target.closest("li");
+            completeButton.classList.toggle("completed");
+          })
+          .catch(error => {
+            console.log(error);
+            alert("서버와의 통신 실패!");
+          })
+        return;
+      }
+    }
+  }
+})
+
+
+function updateTodoListByUser(userNameCalled) {
   for (let i = 0; i < staticUserObj.length; i++) {
-    if (staticUserObj[i].name == userName) {
+    if (staticUserObj[i].name == userNameCalled) {
       todoList.innerHTML = "";
       userName.innerText = staticUserObj[i].name;
       appendTodoList(staticUserObj[i].todoList);
