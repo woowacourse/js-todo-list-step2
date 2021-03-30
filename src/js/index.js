@@ -1,10 +1,54 @@
 const API_URL = 'https://js-todo-list-9ca3a.df.r.appspot.com/api/users';
 
 const userList = document.getElementById("user-list");
+const todoList = document.querySelector(".todo-list");
 const userCreateButton = document.querySelector('.user-create-button')
 const userDeleteButton = document.querySelector('.user-delete-button')
 
 var staticUserObj;
+
+userList.addEventListener('click', function(e) {
+  if (e.target && e.target.nodeName == "BUTTON" && (!e.target.classList.contains("active"))) {
+    var deactivate = document.querySelector(".active");
+    deactivate.classList.toggle("active");
+    e.target.classList.toggle("active");
+    updateTodoListByUser(e.target);
+  }
+})
+
+function updateTodoListByUser(user) {
+  for (let i = 0; i < staticUserObj.length; i++) {
+    if (staticUserObj[i].name == user.innerText) {
+      todoList.innerHTML = "";
+      appendTodoList(staticUserObj[i].todoList);
+    }
+  }
+}
+
+function appendTodoList(userTodoList) {
+  console.log(userTodoList)
+  for (let i = 0; i < userTodoList.length; i++) {
+    var list = document.createElement("li");
+    if (userTodoList[i].isCompleted) {
+      list.classList.add("completed");
+    }
+    list.innerHTML = 
+              `<div class="view">
+                <input class="toggle" type="checkbox" />
+                <label class="label">
+                  <select class="chip select">
+                    <option value="0" selected>순위</option>
+                    <option value="1">1순위</option>
+                    <option value="2">2순위</option>
+                  </select>
+                  ${userTodoList[i].contents}
+                </label>
+                <button class="destroy"></button>
+              </div>
+      <input class="edit" value="완료된 타이틀" />`;
+    todoList.appendChild(list);
+  }
+}
 
 function loadAllUserFromServer() {
   fetch(API_URL)
@@ -21,18 +65,19 @@ function loadAllUserFromServer() {
 function showAllUser(userObj) {
   for (let i = 0; i < userObj.length; i++) {
     console.log(userObj[i])
-    showSingleUser(i, userObj[i].name);
+    showSingleUser(i, userObj[i]);
   }
 }
 
-function showSingleUser(index, name) {
+function showSingleUser(index, userObj) {
   var user = document.createElement("button");
   if (index === 0) {
+    appendTodoList(userObj);
     user.setAttribute("class", "ripple active");
   } else {
     user.setAttribute("class", "ripple");
   }
-  user.innerText = name;
+  user.innerText = userObj.name;
   userList.insertBefore(user, userCreateButton);
 }
 
