@@ -5,20 +5,17 @@ export const addEvent = () => {
     $input.addEventListener("keydown", addTodoList)
 }
 
-const addTodoList = (event) => {
+const addTodoList = async(event) => {
     if (event.key === "Enter") {
         const $activeUser = document.querySelector('.active');
         const userId = $activeUser.dataset.id;
         const $input = document.querySelector(".new-todo");
         const $todoList = document.querySelector(".todo-list");
 
-        service.createTodoItem(userId, $input.value);
+        await service.createTodoItem(userId, $input.value);
         addTodoListElement($input, $todoList);
         resetInput();
     }
-
-    // store에 저장
-
 }
 
 const addTodoListElement = ($input, $todoList) => {
