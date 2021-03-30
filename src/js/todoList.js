@@ -1,13 +1,21 @@
+const chipTemplate = (priority) => {
+  if (priority === "FIRST") {
+    return `<span class="chip primary">1순위</span>`;
+  }
+  return `<span class="chip secondary">2순위</span>`;
+}
+
 const todoTemplate = (todo) => {
   return `<li ${todo["isCompleted"] ? `class="completed"` : ``} id = ${todo["_id"]}>
               <div class="view">
                 <input class="toggle" type="checkbox" ${todo["isCompleted"] ? `checked` : ``}/>
                 <label class="label">
-                  <select class="chip select">
+                  ${todo["priority"] === "NONE" ?
+                  `<select class="chip select">
                     <option value="0" selected>순위</option>
                     <option value="1">1순위</option>
                     <option value="2">2순위</option>
-                  </select>
+                  </select>` : chipTemplate(todo["priority"])}
                   ${todo["contents"]}
                 </label>
                 <button class="destroy"></button>

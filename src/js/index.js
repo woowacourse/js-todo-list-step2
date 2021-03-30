@@ -6,6 +6,12 @@ const baseApiUrl = "https://js-todo-list-9ca3a.df.r.appspot.com/api/users";
 let users = [];
 let selectedUserId = "";
 
+let priority = {
+  "0": "NONE",
+  "1": "FIRST",
+  "2": "SECOND"
+}
+
 const loadData = async () => {
   const response = await fetch(baseApiUrl);
   users = await response.json();
@@ -115,9 +121,10 @@ const onTodoDeleteHandler = async (event) => {
         .filter(todo => todo["_id"] !== selectedTodoId);
     todoList.updateTodoList(getTodosById(selectedUserId));
 
-    await fetch(baseApiUrl + "/" + selectedUserId + "/items/" + selectedTodoId, {
-      method: "DELETE"
-    });
+    await fetch(baseApiUrl + "/" + selectedUserId + "/items/" + selectedTodoId,
+        {
+          method: "DELETE"
+        });
   }
 }
 
@@ -135,21 +142,40 @@ const onFinishToEditTodoHandler = async ({target, key}) => {
       return;
     }
     const selectedTodoId = target.closest("li").id;
-    getTodosById(selectedUserId).find(todo => todo["_id"] === selectedTodoId)["contents"] = target.value;
+    getTodosById(selectedUserId).find(
+        todo => todo["_id"] === selectedTodoId)["contents"] = target.value;
     todoList.updateTodoList(getTodosById(selectedUserId));
-    await fetch(baseApiUrl + "/" + selectedUserId + "/items/" + selectedTodoId, {
-      headers: {
-        "Content-Type": "application/json"
-      },
-      method: "PUT",
-      body: JSON.stringify({"contents": target.value})
-    });
+    await fetch(baseApiUrl + "/" + selectedUserId + "/items/" + selectedTodoId,
+        {
+          headers: {
+            "Content-Type": "application/json"
+          },
+          method: "PUT",
+          body: JSON.stringify({"contents": target.value})
+        });
     return;
   }
   if (key === "Escape") {
     const selectedRow = target.closest("li");
     selectedRow.classList.remove("editing");
     todoList.updateTodoList(getTodosById(selectedUserId));
+  }
+}
+
+const onSelectChip = async (event) => {
+  if (event.target.value !== "0") {
+    const selectedTodoId = event.target.closest("li").id;
+    getTodosById(selectedUserId).find(todo => todo["_id"]
+        === selectedTodoId)["priority"] = priority[event.target.value];
+    todoList.updateTodoList(getTodosById(selectedUserId));
+    await fetch(baseApiUrl + "/" + selectedUserId + "/items/" + selectedTodoId
+        + "/priority", {
+      headers: {
+        "Content-Type": "application/json"
+      },
+      method: "PUT",
+      body: JSON.stringify({"priority": priority[event.target.value]})
+    });
   }
 }
 
@@ -163,7 +189,9 @@ document.querySelector(".new-todo").addEventListener("keyup",
 document.querySelector(".main").addEventListener("click", onCompleteHandler);
 document.querySelector(".main").addEventListener("click", onTodoDeleteHandler);
 document.querySelector(".main").addEventListener("dblclick", onEditTodoHandler);
-document.querySelector(".main").addEventListener("keyup", onFinishToEditTodoHandler);
+document.querySelector(".main").addEventListener("keyup",
+    onFinishToEditTodoHandler);
+document.querySelector(".main").addEventListener("change", onSelectChip);
 
 window.onload = async () => {
   await loadData()
