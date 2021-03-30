@@ -8,6 +8,7 @@
       href="https://fonts.googleapis.com/icon?family=Material+Icons"
       rel="stylesheet"
     />
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
   </head>
   <body>
     <div id="app">
@@ -16,8 +17,6 @@
       </h1>
       <section>
         <div id="user-list">
-          <button class="ripple active">makerjun</button>
-          <button class="ripple">eastjun</button>
           <button class="ripple user-create-button" data-action="createUser">
             + 유저 생성
           </button>
@@ -47,43 +46,6 @@
                   </div>
                 </label>
               </div>
-            </li>
-            <li>
-              <div class="view">
-                <input class="toggle" type="checkbox" />
-                <label class="label">
-                  <select class="chip select">
-                    <option value="0" selected>순위</option>
-                    <option value="1">1순위</option>
-                    <option value="2">2순위</option>
-                  </select>
-                  해야할 아이템
-                </label>
-                <button class="destroy"></button>
-              </div>
-              <input class="edit" value="완료된 타이틀" />
-            </li>
-            <li>
-              <div class="view">
-                <input class="toggle" type="checkbox" />
-                <label class="label">
-                  <span class="chip primary">1순위</span>
-                  해야할 아이템
-                </label>
-                <button class="destroy"></button>
-              </div>
-              <input class="edit" value="완료된 타이틀" />
-            </li>
-            <li>
-              <div class="view">
-                <input class="toggle" type="checkbox" />
-                <label class="label">
-                  <span class="chip secondary">2순위</span>
-                  해야할 아이템
-                </label>
-                <button class="destroy"></button>
-              </div>
-              <input class="edit" value="완료된 타이틀" />
             </li>
             <li class="completed">
               <div class="view">
@@ -123,6 +85,6 @@
         </div>
       </section>
     </div>
-    <script src="./src/js/index.js"></script>
+    <script type="module" src="./src/js/index.js"></script>
   </body>
 </html>

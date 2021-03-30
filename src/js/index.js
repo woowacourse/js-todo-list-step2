@@ -1,7 +1,16 @@
-const onUserCreateHandler = () => {
-  const userName = prompt("추가하고 싶은 이름을 입력해주세요.");
-}
+import * as UserList from './component/userList/UserListComponent.js';
+import * as TodoListInput from './component/userList/TodoListInputComponent.js';
+import * as TodoItem from './component/userList/TodoItemComponent.js';
 
-const userCreateButton = document.querySelector('.user-create-button')
-userCreateButton.addEventListener('click', onUserCreateHandler)
+// 초기 이벤트 설정하기
+(function() {
+    UserList.addEvent();
+    TodoListInput.addEvent();
+    TodoItem.addEvent();
+})();
+
+// 초기 데이터 불러오기
+(function() {
+    UserList.getUsersAndRender();
+})();
 
