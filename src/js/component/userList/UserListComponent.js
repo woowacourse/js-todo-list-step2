@@ -1,9 +1,11 @@
-import * as userCreateButton from './UserCreateButtonComponent.js';
+import * as UserCreateButton from './UserCreateButtonComponent.js';
+import * as UserDeleteButton from './UserDeleteButtonComponent.js';
 import * as UserComponent from './UserComponent.js';
 import * as service from '../../service.js';
 
 export async function addEvent() {
-    userCreateButton.addEvent();
+    UserCreateButton.addEvent();
+    UserDeleteButton.addEvent();
 }
 
 export async function getUsers() {
@@ -12,7 +14,7 @@ export async function getUsers() {
     const getUsersApi = await service.getUsers();
     const users = getUsersApi.data;
     for (let i = 0; i < users.length; i++) {
-        const button = UserComponent.createUserElement(users[i].name);
+        const button = UserComponent.createUserElement(users[i].name, users[i]._id);
         $userList.insertBefore(button, $userCreateButton);
     }
     setActiveToFirstUser();

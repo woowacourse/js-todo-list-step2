@@ -10,6 +10,3 @@ import * as userList from './component/userList/UserListComponent.js';
     userList.getUsers();
 })();
 
-
-
-
