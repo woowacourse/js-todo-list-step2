@@ -9,6 +9,6 @@ import * as TodoListInput from './component/userList/TodoListInputComponent.js';
 
 // 초기 데이터 불러오기
 (function() {
-    UserList.getUsers();
+    UserList.getUsersAndRender();
 })();
 
