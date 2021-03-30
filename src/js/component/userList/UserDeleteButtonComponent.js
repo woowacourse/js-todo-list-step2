@@ -7,6 +7,12 @@ export function addEvent() {
 }
 
 const onUserCreateHandler = () => {
-    const isDeleteConfirm = confirm("을 삭제하시겠습니까?");
-
+    const $activeUser = document.querySelector('.active');
+    const userId = $activeUser.dataset.id;
+    const userName = $activeUser.textContent;
+    const isDeleteConfirm = confirm(userName + "을 삭제하시겠습니까?");
+    if (isDeleteConfirm) {
+        service.deleteUser(userId);
+        $activeUser.remove();
+    }
 }
