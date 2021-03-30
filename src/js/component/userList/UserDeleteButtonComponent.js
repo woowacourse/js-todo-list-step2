@@ -8,4 +8,5 @@ export function addEvent() {
 
 const onUserCreateHandler = () => {
     const isDeleteConfirm = confirm("을 삭제하시겠습니까?");
+
 }
