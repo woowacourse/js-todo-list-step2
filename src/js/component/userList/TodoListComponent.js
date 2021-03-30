@@ -1,6 +1,7 @@
 import * as service from '../../service.js';
 
 export const getTodoListAndRender = async (userId) => {
+    cleanTodoList();
     const getTodoItemsApi = await service.getTodoItems(userId);
     const todoItems = getTodoItemsApi.data;
     console.log(todoItems);
@@ -43,4 +44,11 @@ const createTodoListItemElement = (todoItem) => {
         ${todoItem.contents}`
     }
     return element;
+}
+
+const cleanTodoList = () => {
+    const $todoItems = document.querySelectorAll(".todo-list li");
+    for (let i = 1; i < $todoItems.length; i++) {
+        $todoItems[i].remove();
+    }
 }
