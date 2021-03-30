@@ -5,21 +5,25 @@ export const addEvent = () => {
     $input.addEventListener("keydown", addTodoList)
 }
 
-const addTodoList = async(event) => {
+const addTodoList = async (event) => {
     if (event.key === "Enter") {
         const $activeUser = document.querySelector('.active');
         const userId = $activeUser.dataset.id;
         const $input = document.querySelector(".new-todo");
         const $todoList = document.querySelector(".todo-list");
 
-        await service.createTodoItem(userId, $input.value);
-        addTodoListElement($input, $todoList);
+        const createTodoItemApi = await service.createTodoItem(userId, $input.value);
+        const todoItemId = createTodoItemApi.data._id;
+        console.log("aaacreateTodoItem");
+        console.log(createTodoItemApi);
+        addTodoItemElement($input, $todoList, todoItemId);
         resetInput();
     }
 }
 
-const addTodoListElement = ($input, $todoList) => {
+const addTodoItemElement = ($input, $todoList, todoItemId) => {
     const todoItem = document.createElement("li");
+    todoItem.setAttribute("data-id", todoItemId);
     todoItem.innerHTML = `<div class="view">
                             <input class="toggle" type="checkbox" />
                             <label class="label">
