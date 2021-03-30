@@ -54,7 +54,6 @@ const getTextFromTodoItem = ($todoItem) => {
 
 const keydownTodoItem = (event) => {
     if (event.key === "Enter") {
-        console.log("이건가 ?")
         const $todoItem = event.target.closest("li");
         editTodoItem($todoItem);
     }

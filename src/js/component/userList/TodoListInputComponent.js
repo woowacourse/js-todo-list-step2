@@ -10,6 +10,10 @@ const addTodoList = async (event) => {
         const $activeUser = document.querySelector('.active');
         const userId = $activeUser.dataset.id;
         const $input = document.querySelector(".new-todo");
+        if ($input.textContent.length < 2) {
+            alert("2글자 이상이어야 합니다.");
+            return;
+        }
         const $todoList = document.querySelector(".todo-list");
 
         const createTodoItemApi = await service.createTodoItem(userId, $input.value);

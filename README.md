@@ -49,7 +49,7 @@
 ## 🕵️‍♂️ 제약사항
 
 - [x] 1. User의 이름은 최소 2글자 이상이어야 한다.
-- [ ] 2. TodoItem Contents는 최소 2글자 이상이어야 한다.
+- [x] 2. TodoItem Contents는 최소 2글자 이상이어야 한다.
 
 <br/>
 
