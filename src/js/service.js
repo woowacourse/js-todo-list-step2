@@ -83,6 +83,7 @@ export async function updateTodoItemPriority(userId, itemId, priority) {
 }
 
 export async function toggleTodoItemToBeCompleted(userId, itemId) {
+    console.log("통신")
     return await axios({
         method: 'put',
         url: `/users/${userId}/items/${itemId}/toggle`,
