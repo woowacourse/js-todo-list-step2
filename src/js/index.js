@@ -31,9 +31,24 @@ todoList.addEventListener('click', function (e) {
       }
     }
   }
+
+  if (e.target && e.target.nodeName == "BUTTON") {
+    if (confirm("삭제하시겠습니까?")) {
+      var currentUser = getCurrentUserObj();
+      var chosenTodo = (e.target.parentNode.getElementsByClassName("label")[0].innerText)
+      for (let i = 0; i < currentUser.todoList.length; i++) {
+        if (chosenTodo.includes(currentUser.todoList[i].contents)) {
+          var userID = currentUser._id //현재 유저아이디
+          var itemID = currentUser.todoList[i]._id // 아이템 아이디
+          deleteToDoList(userID, itemID, e.target.closest("li"));
+          return;
+        }
+      }
+    }
+  }
 })
 
-function updateCompletion(userID, itemID, completeButton) {
+function updateCompletion(userID, itemID, todoList) {
   fetch(API_URL + "/" + userID + "/items/" + itemID + "/toggle", { method: 'PUT' })
     .then(data => {
       if (!data.ok) {
@@ -42,7 +57,7 @@ function updateCompletion(userID, itemID, completeButton) {
       return data.json();
     })
     .then(post => {
-      completeButton.classList.toggle("completed");
+      todoList.classList.toggle("completed");
     })
     .catch(error => {
       console.log(error);
@@ -50,6 +65,24 @@ function updateCompletion(userID, itemID, completeButton) {
     })
   return;
 }
+
+function deleteToDoList(userID, itemID, todoList) {
+  fetch(API_URL + "/" + userID + "/items/" + itemID, { method: 'DELETE' })
+    .then(data => {
+      if (!data.ok) {
+        throw new Error(data.status);
+      }
+      return data.json();
+    })
+    .then(post => {
+      todoList.remove();
+    })
+    .catch(error => {
+      console.log(error);
+      alert("서버와의 통신 실패!");
+    })
+}
+
 
 function updateTodoListByUser(userNameCalled) {
   for (let i = 0; i < staticUserObj.length; i++) {
