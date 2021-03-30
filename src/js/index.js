@@ -3,8 +3,9 @@ const API_URL = 'https://js-todo-list-9ca3a.df.r.appspot.com/api/users';
 const userName = document.querySelector("#user-title > span > strong");
 const userList = document.getElementById("user-list");
 const todoList = document.querySelector(".todo-list");
-const userCreateButton = document.querySelector('.user-create-button')
-const userDeleteButton = document.querySelector('.user-delete-button')
+const userCreateButton = document.querySelector('.user-create-button');
+const userDeleteButton = document.querySelector('.user-delete-button');
+const todoInputWindow = document.querySelector('.new-todo');
 
 var staticUserObj;
 
@@ -13,13 +14,13 @@ userList.addEventListener('click', function(e) {
     var deactivate = document.querySelector(".active");
     deactivate.classList.toggle("active");
     e.target.classList.toggle("active");
-    updateTodoListByUser(e.target);
+    updateTodoListByUser(e.target.innerText);
   }
 })
 
-function updateTodoListByUser(user) {
+function updateTodoListByUser(userName) {
   for (let i = 0; i < staticUserObj.length; i++) {
-    if (staticUserObj[i].name == user.innerText) {
+    if (staticUserObj[i].name == userName) {
       todoList.innerHTML = "";
       userName.innerText = staticUserObj[i].name;
       appendTodoList(staticUserObj[i].todoList);
@@ -88,9 +89,7 @@ const onUserCreateHandler = () => {
   const userName = prompt("추가하고 싶은 이름을 입력해주세요.");
   if (userName.length >= 2) {
     const newUser = {
-      _id: "testID",
       name: userName,
-      todoList: []
     }
 
     const postOption = {
@@ -171,7 +170,56 @@ function deleteUser(userID, userToBeDeleted) {
     })
 }
 
-
 userCreateButton.addEventListener('click', onUserCreateHandler);
 userDeleteButton.addEventListener('click', onUserDeleteHandler);
+
+todoInputWindow.addEventListener('keydown', function(e) {
+  if (e.key == "Enter" && e.target.value.length >= 2) {
+    var currentUserObj = getCurrentUserObj();
+    var newToDoList = e.target.value;
+
+    const userWithUpdatedToDo = {
+      contents: newToDoList
+    }
+
+    const postOption = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(userWithUpdatedToDo)
+    }
+    console.log(postOption)
+    saveNewToDoToServer(postOption, currentUserObj);
+  } 
+});
+
+function saveNewToDoToServer(postOption, userObj) {
+  fetch(API_URL + "/" + userObj._id + "/items/", postOption)
+    .then(data => {
+      if (!data.ok) {
+        throw new Error(data.status);
+      }
+      return data.json();
+    })
+    .then(post => {
+      userObj.todoList.push(post);
+      updateTodoListByUser(userObj.name);
+    })
+    .catch(error => {
+      console.log(error);
+      alert("서버와의 통신 실패!");
+    })
+}
+
+function getCurrentUserObj() {
+  var currentUser = document.querySelector(".active");
+  var userName = currentUser.innerText;
+  for (let i = 0; i < staticUserObj.length; i++) {
+    if (staticUserObj[i].name === userName) {
+      return staticUserObj[i];
+    }
+  }
+}
+
 loadAllUserFromServer();
