@@ -1,5 +1,6 @@
 const API_URL = 'https://js-todo-list-9ca3a.df.r.appspot.com/api/users';
 
+const userName = document.querySelector("#user-title > span > strong");
 const userList = document.getElementById("user-list");
 const todoList = document.querySelector(".todo-list");
 const userCreateButton = document.querySelector('.user-create-button')
@@ -20,6 +21,7 @@ function updateTodoListByUser(user) {
   for (let i = 0; i < staticUserObj.length; i++) {
     if (staticUserObj[i].name == user.innerText) {
       todoList.innerHTML = "";
+      userName.innerText = staticUserObj[i].name;
       appendTodoList(staticUserObj[i].todoList);
     }
   }
@@ -73,6 +75,7 @@ function showSingleUser(index, userObj) {
   var user = document.createElement("button");
   if (index === 0) {
     appendTodoList(userObj);
+    userName.innerText = userObj.name;
     user.setAttribute("class", "ripple active");
   } else {
     user.setAttribute("class", "ripple");
