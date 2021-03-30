@@ -4,10 +4,11 @@ export const addEvent = () => {
     const $todoList = document.querySelector(".todo-list");
     $todoList.addEventListener("click", clickTodoItem);
     $todoList.addEventListener("dblclick", dblclickTodoItem);
+    $todoList.addEventListener("keydown", keydownTodoItem);
 }
 
 const clickTodoItem = async (event) => {
-    if (event.target && event.target.nodeName === "INPUT") {
+    if (event.target && event.target.nodeName === "INPUT" && event.target.classList.contains("toggle")) {
         toggleTodoItemToBeCompleted(event);
         return;
     }
@@ -42,19 +43,30 @@ const dblclickTodoItem = (event) => {
 const convertToEditStatus = (event) => {
     const $todoItem = event.target.closest("li");
     $todoItem.classList.toggle("editing");
-    const $input = $todoItem.querySelector(".edit");
-    $input.value = getTextFromTodoItem($todoItem);
+    const $editInput = $todoItem.querySelector(".edit");
+    $editInput.value = getTextFromTodoItem($todoItem);
 }
 
 const getTextFromTodoItem = ($todoItem) => {
-    const cloneLabel = $todoItem.querySelector(".label").cloneNode(true);
-    const selectOption = cloneLabel.querySelector("select");
-    const chip = cloneLabel.querySelector(".chip");
-    if (selectOption) {
-        selectOption.remove();
+    const text = $todoItem.querySelector(".todo-item-text").textContent;
+    return text;
+}
+
+const keydownTodoItem = (event) => {
+    if (event.key === "Enter") {
+        console.log("이건가 ?")
+        const $todoItem = event.target.closest("li");
+        editTodoItem($todoItem);
     }
-    if (chip) {
-        chip.remove();
-    }
-    return cloneLabel.textContent.trim();
+}
+
+const editTodoItem = ($todoItem) => {
+    $todoItem.classList.toggle("editing");
+    const $editInput = $todoItem.querySelector(".edit");
+    const editedText = $editInput.value;
+    $todoItem.querySelector(".todo-item-text").textContent = editedText;
+
+    const $activeUser = document.querySelector('.active');
+    const userId = $activeUser.dataset.id;
+    service.updateTodoItem(userId, $todoItem.dataset.id, editedText);
 }

@@ -38,15 +38,15 @@ const createTodoListItemElement = (todoItem) => {
             <option value="1">1순위</option>
             <option value="2">2순위</option>
           </select>
-          ${todoItem.contents}`
+          <span class="todo-item-text">${todoItem.contents}</span>`
     } else if (todoItem.priority === "FIRST") {
         priorityLabel.innerHTML = `
           <span class="chip primary">1순위</span>
-          ${todoItem.contents}`
+          <span class="todo-item-text">${todoItem.contents}</span>`
     } else if (todoItem.priority === "SECOND") {
         priorityLabel.innerHTML = `
         <span class="chip secondary">2순위</span>
-        ${todoItem.contents}`
+        <span class="todo-item-text">${todoItem.contents}</span>`
     }
     return element;
 }

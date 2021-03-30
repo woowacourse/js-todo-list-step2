@@ -14,8 +14,6 @@ const addTodoList = async (event) => {
 
         const createTodoItemApi = await service.createTodoItem(userId, $input.value);
         const todoItemId = createTodoItemApi.data._id;
-        console.log("aaacreateTodoItem");
-        console.log(createTodoItemApi);
         addTodoItemElement($input, $todoList, todoItemId);
         resetInput();
     }
@@ -32,7 +30,7 @@ const addTodoItemElement = ($input, $todoList, todoItemId) => {
                                     <option value="1">1순위</option>
                                     <option value="2">2순위</option>
                                 </select>
-                                ${$input.value}
+                                <span class="todo-item-text">${$input.value}</span>
                             </label>
                             <button class="destroy"></button>
                         </div>
