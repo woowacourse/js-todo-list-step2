@@ -10,6 +10,7 @@ const todoInputWindow = document.querySelector('.new-todo');
 var staticUserObj;
 
 userList.addEventListener('click', function(e) {
+  loadAllUserWithUpdate();
   if (e.target && e.target.nodeName == "BUTTON" && (!e.target.classList.contains("active"))) {
     var deactivate = document.querySelector(".active");
     deactivate.classList.toggle("active");
@@ -19,7 +20,7 @@ userList.addEventListener('click', function(e) {
 })
 
 todoList.addEventListener('click', function (e) {
-  if (e.target && e.target.nodeName == "INPUT") {
+  if (e.target && e.target.nodeName == "INPUT" && e.target.classList.contains("toggle")) {
     var currentUser = getCurrentUserObj();
     var chosenTodo = (e.target.parentNode.getElementsByClassName("label")[0].innerText)
     for (let i = 0; i < currentUser.todoList.length; i++) {
@@ -83,6 +84,72 @@ function deleteToDoList(userID, itemID, todoList) {
     })
 }
 
+todoList.addEventListener('dblclick', function (e) {
+  if (e.target && e.target.nodeName == "LABEL") {
+    var chosenList = e.target.closest("li");
+    chosenList.addEventListener('keydown', finishEditMode);
+    chosenList.classList.toggle("editing");
+  }
+})
+
+function finishEditMode(e) {
+  var currentUser = getCurrentUserObj();
+  var chosenTodo = (e.target.parentNode.getElementsByClassName("label")[0].innerText);
+  var userID;
+  var itemID;
+  for (let i = 0; i < currentUser.todoList.length; i++) {
+    if (chosenTodo.includes(currentUser.todoList[i].contents)) {
+      userID = currentUser._id //현재 유저아이디
+      itemID = currentUser.todoList[i]._id // 아이템 아이디
+    }
+  }
+
+  if (e.key === "Escape") {
+    var chosenList = e.target.closest("li");
+    chosenList.removeAttribute('class');
+    return;
+  }
+
+  if (e.key === "Enter") {
+    var chosenList = e.target.closest("li");
+    var changedText = chosenList.getElementsByClassName("edit")[0].value;
+    chosenList.getElementsByClassName("edit")[0].value = changedText;
+    var label = chosenList.getElementsByClassName("label")[0];
+    label.childNodes[2].nodeValue = changedText;
+    //서버요청!!!
+    updateTodoItem(userID, itemID, changedText);
+    chosenList.removeAttribute('class');
+  }
+}
+
+function updateTodoItem(userID, itemID, changedText) {
+  const updateTodoItem = {
+    contents: changedText
+  }
+
+  const changeTodo = {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(updateTodoItem)
+  }
+
+  fetch(API_URL + "/" + userID + "/items/" + itemID, changeTodo)
+    .then(data => {
+      if (!data.ok) {
+        throw new Error(data.status);
+      }
+      return data.json();
+    })
+    .then(post => {
+      loadAllUserWithUpdate();
+    })
+    .catch(error => {
+      console.log(error);
+      alert("서버와의 통신 실패!");
+    })
+}
 
 function updateTodoListByUser(userNameCalled) {
   for (let i = 0; i < staticUserObj.length; i++) {
@@ -114,9 +181,20 @@ function appendTodoList(userTodoList) {
                 </label>
                 <button class="destroy"></button>
               </div>
-      <input class="edit" value="완료된 타이틀" />`;
+      <input class="edit" value=${userTodoList[i].contents} />`;
     todoList.appendChild(list);
   }
+}
+
+function loadAllUserWithUpdate() {
+  fetch(API_URL)
+    .then(data => {
+      return data.json()
+    })
+    .then(data => {
+      var userObj = data;
+      staticUserObj = userObj;
+    });
 }
 
 function loadAllUserFromServer() {
@@ -257,6 +335,8 @@ todoInputWindow.addEventListener('keydown', function(e) {
     }
     console.log(postOption)
     saveNewToDoToServer(postOption, currentUserObj);
+    todoInputWindow.value = "";
+    console.log(todoInputWindow);
   } 
 });
 
