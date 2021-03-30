@@ -3,8 +3,9 @@ import * as service from '../../service.js';
 export const getTodoListAndRender = async (userId) => {
     cleanTodoList();
     const getTodoItemsApi = await service.getTodoItems(userId);
+    console.log("getTodoItems : ");
+    console.log(getTodoItemsApi);
     const todoItems = getTodoItemsApi.data;
-    console.log(todoItems);
     const $todoList = document.querySelector(".todo-list")
     for (let i = 0; i < todoItems.length; i++) {
         const todoItemElement = createTodoListItemElement(todoItems[i]);
@@ -14,6 +15,7 @@ export const getTodoListAndRender = async (userId) => {
 
 const createTodoListItemElement = (todoItem) => {
     const element = document.createElement("li");
+    element.setAttribute("data-id", todoItem._id);
     element.innerHTML = `
       <div class="view">
         <input class="toggle" type="checkbox" />

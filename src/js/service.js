@@ -82,7 +82,7 @@ export async function updateTodoItemPriority(userId, itemId, priority) {
     });
 }
 
-export async function toggleTodoItemToBeCompleted(userId, itemId, priority) {
+export async function toggleTodoItemToBeCompleted(userId, itemId) {
     return await axios({
         method: 'put',
         url: `/users/${userId}/items/${itemId}/toggle`,
