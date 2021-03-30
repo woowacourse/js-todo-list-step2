@@ -24,6 +24,9 @@ const createTodoListItemElement = (todoItem) => {
       <input class="edit" value="완료된 타이틀" />`
     if (todoItem.isCompleted) {
         element.classList.add("completed");
+        console.log("테스트");
+        console.log(element.querySelector("input"));
+        element.querySelector("input").checked = true;
     }
     const priorityLabel = element.querySelector(".label");
     if (todoItem.priority === "NONE") {
