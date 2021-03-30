@@ -1,12 +1,11 @@
 import * as service from '../../service.js';
-import * as user from './UserComponent.js';
 
 export function addEvent() {
     const $userDeleteButton = document.querySelector('.user-delete-button')
-    $userDeleteButton.addEventListener('click', onUserCreateHandler)
+    $userDeleteButton.addEventListener('click', onUserDeleteHandler)
 }
 
-const onUserCreateHandler = () => {
+const onUserDeleteHandler = () => {
     const $activeUser = document.querySelector('.active');
     const userId = $activeUser.dataset.id;
     const userName = $activeUser.textContent;

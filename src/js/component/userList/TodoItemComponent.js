@@ -7,11 +7,27 @@ export const addEvent = () => {
 
 const clickTodoItem = async (event) => {
     if (event.target && event.target.nodeName == "INPUT") {
-        const $todoList = event.target.closest("li");
-        $todoList.classList.toggle("completed");
-
-        const $activeUser = document.querySelector('.active');
-        const userId = $activeUser.dataset.id;
-        await service.toggleTodoItemToBeCompleted(userId, $todoList.dataset.id);
+        toggleTodoItemToBeCompleted(event);
+        return;
     }
+    if (event.target && event.target.classList.contains("destroy")) {
+        deleteTodoItem(event);
+    }
+}
+
+const toggleTodoItemToBeCompleted = async (event) => {
+    const $todoItem = event.target.closest("li");
+    $todoItem.classList.toggle("completed");
+
+    const $activeUser = document.querySelector('.active');
+    const userId = $activeUser.dataset.id;
+    await service.toggleTodoItemToBeCompleted(userId, $todoItem.dataset.id);
+}
+
+const deleteTodoItem = async (event) => {
+    const $todoItem = event.target.closest("li");
+    const $activeUser = document.querySelector('.active');
+    const userId = $activeUser.dataset.id;
+    $todoItem.remove();
+    service.deleteTodoItem(userId, $todoItem.dataset.id)
 }
