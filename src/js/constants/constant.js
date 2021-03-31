@@ -16,6 +16,7 @@ export const SELECTOR = {
 }
 
 export const CLASS = {
+    ACTIVE: "active",
     SELECTED: "selected",
     PRIMARY: "primary",
     SECONDARY: "secondary",
@@ -23,6 +24,6 @@ export const CLASS = {
 }
 
 export const URL = {
-    BASE: "https://js-todo-list-9ca3a.df.r.appspot.com"
+    USER: "https://js-todo-list-9ca3a.df.r.appspot.com/api/users"
 }
 
