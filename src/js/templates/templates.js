@@ -1,5 +1,5 @@
-export const userTemplate = (userName) => {
-    return `<button class="ripple">${userName}</button>`;
+export const userTemplate = ({_id, name}) => {
+    return `<button _id="${_id}"  class="ripple">${name}</button>`;
 }
 
 export const userCreateAndDeleteTemplate = () => {

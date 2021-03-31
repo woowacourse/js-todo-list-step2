@@ -3,32 +3,41 @@ import {CLASS, SELECTOR} from "../constants/constant.js"
 import {userCreateAndDeleteTemplate, userTemplate} from "../templates/templates.js"
 
 export class UserView {
+
+    #createButton
+    #deleteButton
+
+    constructor() {
+        this.#createButton = $(SELECTOR.USER_CREATE_BUTTON)
+        this.#deleteButton = $(SELECTOR.USER_DELETE_BUTTON)
+    }
+
     renderUsers(users) {
         const $userList = $(SELECTOR.USER_LIST)
         $userList.innerHTML = ''
 
-        console.log(users)
-
         for (const user of users) {
             $userList.appendChild(
-                parseDomFromString(userTemplate(user.name, false))
+                parseDomFromString(userTemplate(user))
             )
         }
 
-        $userList.firstElementChild.classList.add(CLASS.ACTIVE)
+        this.toActivationUser($userList
+            .firstElementChild
+            .getAttribute("_id"))
 
-        $userList.appendChild(
-            parseDomFromString(userCreateAndDeleteTemplate())
-        )
+        $userList.appendChild(this.#createButton)
+        $userList.appendChild(this.#deleteButton)
     }
 
-    toActivationUser($user) {
+    toActivationUser(id) {
         const $userList = $(SELECTOR.USER_LIST)
 
         for(const childNode of $userList.childNodes) {
-            childNode.className.remove(CLASS.ACTIVE)
+            childNode.classList.remove(CLASS.ACTIVE)
         }
 
-        $user.className.add(CLASS.ACTIVE)
+        const $user = $(`button[_id="${id}"]`)
+        $user.classList.add(CLASS.ACTIVE)
     }
 }
