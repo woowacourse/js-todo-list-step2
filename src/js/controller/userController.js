@@ -1,6 +1,6 @@
 import {$} from "../util/util.js"
 import {UserView} from "../view/userView.js";
-import {createUser, fetchUserList} from "../api/api.js";
+import {createUser, deleteUser, fetchUserList} from "../api/api.js";
 import {SELECTOR} from "../constants/constant.js";
 
 
@@ -19,6 +19,7 @@ export class UserController {
     async init() {
         this.#userView.renderUsers(await fetchUserList())
         this.#handleUserCreation()
+        this.#handleUserDelete()
     }
 
     #handleUserCreation() {
@@ -29,6 +30,17 @@ export class UserController {
             const result = await createUser(name)
             this.#userView.renderUsers(await fetchUserList())
             this.#userView.toActivationUser(result._id)
+        })
+    }
+
+    #handleUserDelete() {
+        this.#deleteButton.addEventListener('click', async e => {
+            const currentUser = this.#userView.getCurrentUser()
+            const answer = confirm(`${currentUser.innerText}을 삭제하시겟습니니까?`)
+
+            if(answer) {
+                await deleteUser(currentUser.getAttribute("_id"))
+            }
         })
     }
 

@@ -12,7 +12,9 @@ export const SELECTOR = {
 
     TODO_COUNT: ".todo-count",
     FILTERS: ".filters",
-    CLEAR_COMPLETED: ".clear-completed"
+    CLEAR_COMPLETED: ".clear-completed",
+
+    ACTIVE: "button.active"
 }
 
 export const CLASS = {
@@ -24,6 +26,7 @@ export const CLASS = {
 }
 
 export const URL = {
-    USER: "https://js-todo-list-9ca3a.df.r.appspot.com/api/users"
+    USER: "https://js-todo-list-9ca3a.df.r.appspot.com/api/users",
+    DELETE: (userId) => `https://js-todo-list-9ca3a.df.r.appspot.com/api/users/${userId}`
 }
 

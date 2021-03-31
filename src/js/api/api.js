@@ -26,3 +26,16 @@ export const createUser = async (name) => {
         alert(e)
     }
 }
+
+export const deleteUser = async (userId) => {
+    try {
+        const option = {
+            method: 'DELETE'
+        }
+
+        const result = await fetch(URL.DELETE(userId), option)
+        return await result.json()
+    } catch (e) {
+        alert(e)
+    }
+}

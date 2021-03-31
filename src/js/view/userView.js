@@ -30,6 +30,10 @@ export class UserView {
         $userList.appendChild(this.#deleteButton)
     }
 
+    getCurrentUser() {
+        return $(SELECTOR.ACTIVE)
+    }
+
     toActivationUser(id) {
         const $userList = $(SELECTOR.USER_LIST)
 
