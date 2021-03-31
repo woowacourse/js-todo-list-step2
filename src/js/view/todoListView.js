@@ -11,6 +11,8 @@ export class TodoListView {
     }
 
     renderItems(items) {
+        this.#todoList.innerHTML = ''
+
         for(const item of items) {
             this.#todoList.appendChild(parseDomFromString(itemTemplate(item)))
         }

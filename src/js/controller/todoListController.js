@@ -1,7 +1,7 @@
 import {$} from "../util/util.js"
 import {UserView} from "../view/userView.js";
 import {createUser, deleteUser, fetchTodoItems, fetchUserList} from "../api/api.js";
-import {SELECTOR} from "../constants/constant.js";
+import {CLASS, SELECTOR} from "../constants/constant.js";
 import {TodoListView} from "../view/todoListView.js";
 
 
@@ -25,6 +25,7 @@ export class TodoListController {
         this.#userView.renderUsers(await fetchUserList())
         this.#handleUserCreation()
         this.#handleUserDelete()
+        this.#handleUserSelection()
 
         const currentUserId = $(SELECTOR.ACTIVE).getAttribute("_id")
         this.#todoListView.renderItems(await fetchTodoItems(currentUserId))
@@ -48,6 +49,16 @@ export class TodoListController {
 
             if(answer) {
                 await deleteUser(currentUser.getAttribute("_id"))
+            }
+        })
+    }
+
+    #handleUserSelection() {
+        $(SELECTOR.USER_LIST).addEventListener('click', async e => {
+            if(e.target && e.target.classList.contains(CLASS.NAME)) {
+                const _id = e.target.getAttribute("_id")
+                this.#userView.toActivationUser(_id)
+                this.#todoListView.renderItems(await fetchTodoItems(_id))
             }
         })
     }

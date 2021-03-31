@@ -22,6 +22,7 @@ export const CLASS = {
     SELECTED: "selected",
     PRIMARY: "primary",
     SECONDARY: "secondary",
+    NAME: "name"
 }
 
 export const URL = {

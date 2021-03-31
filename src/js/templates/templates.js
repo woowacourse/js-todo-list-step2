@@ -1,5 +1,5 @@
 export const userTemplate = ({_id, name}) => {
-    return `<button _id="${_id}"  class="ripple">${name}</button>`;
+    return `<button _id="${_id}"  class="ripple name">${name}</button>`;
 }
 
 export const userCreateAndDeleteTemplate = () => {
@@ -15,7 +15,7 @@ export const userCreateAndDeleteTemplate = () => {
 export const itemTemplate = ({_id, contents, isCompleted, priority}) => {
     return`<li ${isCompleted ? `class="completed"` : ""} _id="${_id}">
         <div class="view">
-            <input class="toggle" type="checkbox"/>
+            <input class="toggle" type="checkbox" ${isCompleted ? `checked` : ""}/>
             <label class="label">
                 ${priorityTemplate(priority)}
                 ${contents}
