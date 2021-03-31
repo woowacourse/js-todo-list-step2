@@ -22,11 +22,11 @@ export const CLASS = {
     SELECTED: "selected",
     PRIMARY: "primary",
     SECONDARY: "secondary",
-
 }
 
 export const URL = {
     USER: "https://js-todo-list-9ca3a.df.r.appspot.com/api/users",
-    DELETE: (userId) => `https://js-todo-list-9ca3a.df.r.appspot.com/api/users/${userId}`
+    TODO_ITEMS: userId => `https://js-todo-list-9ca3a.df.r.appspot.com/api/users/${userId}/items`,
+    DELETE: userId => `https://js-todo-list-9ca3a.df.r.appspot.com/api/users/${userId}`
 }
 

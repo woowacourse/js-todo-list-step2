@@ -9,6 +9,15 @@ export const fetchUserList = async () => {
     }
 }
 
+export const fetchTodoItems = async userId => {
+    try {
+        const result = await fetch(URL.TODO_ITEMS(userId))
+        return await result.json()
+    } catch (e) {
+        alert(e)
+    }
+}
+
 export const createUser = async (name) => {
     try {
         const option = {

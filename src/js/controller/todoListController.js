@@ -1,17 +1,22 @@
 import {$} from "../util/util.js"
 import {UserView} from "../view/userView.js";
-import {createUser, deleteUser, fetchUserList} from "../api/api.js";
+import {createUser, deleteUser, fetchTodoItems, fetchUserList} from "../api/api.js";
 import {SELECTOR} from "../constants/constant.js";
+import {TodoListView} from "../view/todoListView.js";
 
 
-export class UserController {
+export class TodoListController {
 
     #userView
+    #todoListView
+
     #createButton
     #deleteButton
 
     constructor() {
         this.#userView = new UserView()
+        this.#todoListView = new TodoListView()
+
         this.#createButton = $(SELECTOR.USER_CREATE_BUTTON)
         this.#deleteButton = $(SELECTOR.USER_DELETE_BUTTON)
     }
@@ -20,6 +25,9 @@ export class UserController {
         this.#userView.renderUsers(await fetchUserList())
         this.#handleUserCreation()
         this.#handleUserDelete()
+
+        const currentUserId = $(SELECTOR.ACTIVE).getAttribute("_id")
+        this.#todoListView.renderItems(await fetchTodoItems(currentUserId))
     }
 
     #handleUserCreation() {

@@ -11,3 +11,33 @@ export const userCreateAndDeleteTemplate = () => {
             삭제 -
         </button>`.trim();
 }
+
+export const itemTemplate = ({_id, contents, isCompleted, priority}) => {
+    return`<li ${isCompleted ? `class="completed"` : ""} _id="${_id}">
+        <div class="view">
+            <input class="toggle" type="checkbox"/>
+            <label class="label">
+                ${priorityTemplate(priority)}
+                ${contents}
+            </label>
+            <button class="destroy"></button>
+        </div>
+        <input class="edit" value="${contents}"/>
+    </li>`
+}
+
+const priorityTemplate = (priority) => {
+    if(priority === 'FIRST') {
+        return `<span class="chip primary">1순위</span>`
+    }
+
+    if(priority === 'SECOND') {
+        return `<span class="chip secondary">2순위</span>`
+    }
+
+    return `<select class="chip select">
+                <option value="0" selected>순위</option>
+                <option value="1">1순위</option>
+                <option value="2">2순위</option>
+            </select>`
+}

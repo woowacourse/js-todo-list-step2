@@ -1,5 +1,7 @@
-import {UserController} from "./controller/userController.js";
+import {TodoListController} from "./controller/todoListController.js";
 
-const userController = new UserController()
+const todoListController = new TodoListController()
 
-userController.init()
+await todoListController.init()
+
+
