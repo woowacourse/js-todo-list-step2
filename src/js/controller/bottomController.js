@@ -5,7 +5,7 @@ import {$} from "../util/util.js"
 import {SELECTOR} from "../constants/constant.js";
 import {deleteAll} from "../api/api.js";
 
-export class FilterController {
+export class BottomController {
 
     #filtersView
     #todoCountView

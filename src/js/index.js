@@ -1,8 +1,8 @@
 import {TodoListController} from "./controller/todoListController.js";
-import {FilterController} from "./controller/filterController.js";
+import {BottomController} from "./controller/bottomController.js";
 
 const todoListController = new TodoListController()
-const filterController = new FilterController()
+const filterController = new BottomController()
 
 await todoListController.init()
 filterController.init()
