@@ -43,6 +43,7 @@ export class TodoListController {
 
         const currentUserId = $(SELECTOR.ACTIVE).getAttribute("_id")
         this.#todoListView.renderItems(await fetchTodoItems(currentUserId))
+        this.#todoListView.renderByHash()
     }
 
     #handleUserCreation() {

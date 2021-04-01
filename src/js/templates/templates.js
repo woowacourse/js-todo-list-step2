@@ -57,3 +57,7 @@ export const allFilterTemplate = selected => {
                 </li>
           </ul>`
 }
+
+export const todoCountTemplate = count => {
+    return `총 <strong>${count}</strong> 개`
+}

@@ -16,6 +16,8 @@ export class TodoListView {
         for (const item of items) {
             this.#todoList.appendChild(parseDomFromString(itemTemplate(item)))
         }
+
+        this.renderByHash()
     }
 
     renderByHash() {
