@@ -87,6 +87,7 @@ export class TodoListController {
                 this.#userView.toActivationUser(_id)
                 this.#todoListView.renderItems(await fetchTodoItems(_id))
                 this.#subjectView.render()
+                this.#todoCountView.renderByHash()
             }
         })
     }
