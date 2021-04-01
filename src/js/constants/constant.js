@@ -28,7 +28,8 @@ export const CLASS = {
     CHECKED: "checked",
     COMPLETED: "completed",
     TOGGLE: "toggle",
-    ALL: "all"
+    ALL: "all",
+    DESTROY: "destroy",
 }
 
 export const NODE_NAME = {
@@ -41,6 +42,7 @@ export const URL = {
     DELETE: userId => `https://js-todo-list-9ca3a.df.r.appspot.com/api/users/${userId}`,
     CHANGE_PRIORITY: (userId, itemId) => `https://js-todo-list-9ca3a.df.r.appspot.com/api/users/${userId}/items/${itemId}/priority`,
     CHANGE_TOGGLE: (userId, itemId) => `https://js-todo-list-9ca3a.df.r.appspot.com/api/users/${userId}/items/${itemId}/toggle`,
-    ALL_ITEM_DELETE: userId => `https://js-todo-list-9ca3a.df.r.appspot.com/api/users/${userId}/items`
+    DELETE_ALL_ITEMS: userId => `https://js-todo-list-9ca3a.df.r.appspot.com/api/users/${userId}/items`,
+    DELETE_ITEM: (userId, itemId) => `https://js-todo-list-9ca3a.df.r.appspot.com/api/users/${userId}/items/${itemId}`
 }
 

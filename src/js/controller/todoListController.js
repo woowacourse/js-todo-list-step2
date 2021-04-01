@@ -7,11 +7,12 @@ import {
     fetchUserList,
     changePriority,
     changeToggle,
-    createItem
+    createItem, deleteItem
 } from "../api/api.js";
 import {CLASS, NODE_NAME, SELECTOR} from "../constants/constant.js";
 import {TodoListView} from "../view/todoListView.js";
 import {NewTodoView} from "../view/newTodoView.js";
+import {TodoCountView} from "../view/todoCountView.js";
 
 
 export class TodoListController {
@@ -19,6 +20,7 @@ export class TodoListController {
     #newTodoView
     #userView
     #todoListView
+    #todoCountView
 
     #createButton
     #deleteButton
@@ -27,6 +29,7 @@ export class TodoListController {
         this.#newTodoView = new NewTodoView()
         this.#userView = new UserView()
         this.#todoListView = new TodoListView()
+        this.#todoCountView = new TodoCountView()
 
         this.#createButton = $(SELECTOR.USER_CREATE_BUTTON)
         this.#deleteButton = $(SELECTOR.USER_DELETE_BUTTON)
@@ -40,6 +43,7 @@ export class TodoListController {
         this.#handleChangePriority()
         this.#handleToggle()
         this.#handleCreateTime()
+        this.#handleDeleteItem()
 
         const currentUserId = $(SELECTOR.ACTIVE).getAttribute("_id")
         this.#todoListView.renderItems(await fetchTodoItems(currentUserId))
@@ -121,6 +125,19 @@ export class TodoListController {
                 await createItem(userId, contents)
                 this.#newTodoView.clear()
                 this.#todoListView.renderItems(await fetchTodoItems(userId))
+            }
+        })
+    }
+
+    #handleDeleteItem() {
+        $(SELECTOR.TODO_LIST).addEventListener('click', async e => {
+            if(e.target && e.target.classList.contains(CLASS.DESTROY)) {
+                const userId = $(SELECTOR.ACTIVE).getAttribute('_id')
+                const itemId = e.target.closest("Li").getAttribute("_id")
+
+                await deleteItem(userId, itemId)
+                this.#todoListView.delete(itemId)
+                this.#todoCountView.renderByHash()
             }
         })
     }

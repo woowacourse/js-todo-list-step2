@@ -3,7 +3,7 @@ import {TodoListView} from "../view/todoListView.js";
 import {TodoCountView} from "../view/todoCountView.js";
 import {$} from "../util/util.js"
 import {SELECTOR} from "../constants/constant.js";
-import {deleteAll} from "../api/api.js";
+import {deleteAllItems} from "../api/api.js";
 
 export class BottomController {
 
@@ -40,7 +40,7 @@ export class BottomController {
     #handleDeleteAll() {
         this.#allDeleteButton.addEventListener('click', async e => {
             const userId = $(SELECTOR.ACTIVE).getAttribute('_id')
-            await deleteAll(userId)
+            await deleteAllItems(userId)
 
             this.#todoListView.deleteAll()
         })

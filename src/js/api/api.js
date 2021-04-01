@@ -100,13 +100,25 @@ export const createItem = async (userId, contents) => {
     }
 }
 
-export const deleteAll = async (userId) => {
+export const deleteAllItems = async (userId) => {
     try {
         const option = {
             method: 'DELETE'
         }
 
-        await fetch(URL.ALL_ITEM_DELETE(userId), option)
+        await fetch(URL.DELETE_ALL_ITEMS(userId), option)
+    } catch (e) {
+        alert(e)
+    }
+}
+
+export const deleteItem = async (userId, itemId) => {
+    try {
+        const option = {
+            method: 'DELETE'
+        }
+
+        await fetch(URL.DELETE_ITEM(userId, itemId), option)
     } catch (e) {
         alert(e)
     }

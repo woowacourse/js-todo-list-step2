@@ -64,4 +64,9 @@ export class TodoListView {
         items.forEach($item => $item.remove())
     }
 
+    delete(itemId) {
+        const $item = $(SELECTOR.TODO_LIST).querySelector(`li[_id="${itemId}"]`)
+        $item.remove()
+    }
+
 }
