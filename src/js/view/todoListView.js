@@ -58,4 +58,10 @@ export class TodoListView {
         }
     }
 
+    deleteAll() {
+        let items = [...$(SELECTOR.TODO_LIST).childNodes]
+
+        items.forEach($item => $item.remove())
+    }
+
 }

@@ -99,3 +99,15 @@ export const createItem = async (userId, contents) => {
         alert(e)
     }
 }
+
+export const deleteAll = async (userId) => {
+    try {
+        const option = {
+            method: 'DELETE'
+        }
+
+        await fetch(URL.ALL_ITEM_DELETE(userId), option)
+    } catch (e) {
+        alert(e)
+    }
+}

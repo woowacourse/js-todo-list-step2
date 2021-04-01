@@ -40,6 +40,7 @@ export const URL = {
     ITEMS: userId => `https://js-todo-list-9ca3a.df.r.appspot.com/api/users/${userId}/items`,
     DELETE: userId => `https://js-todo-list-9ca3a.df.r.appspot.com/api/users/${userId}`,
     CHANGE_PRIORITY: (userId, itemId) => `https://js-todo-list-9ca3a.df.r.appspot.com/api/users/${userId}/items/${itemId}/priority`,
-    CHANGE_TOGGLE: (userId, itemId) => `https://js-todo-list-9ca3a.df.r.appspot.com/api/users/${userId}/items/${itemId}/toggle`
+    CHANGE_TOGGLE: (userId, itemId) => `https://js-todo-list-9ca3a.df.r.appspot.com/api/users/${userId}/items/${itemId}/toggle`,
+    ALL_ITEM_DELETE: userId => `https://js-todo-list-9ca3a.df.r.appspot.com/api/users/${userId}/items`
 }
 
