@@ -16,7 +16,7 @@ export const SELECTOR = {
 
     ACTIVE: "button.active",
     LABEL: ".label",
-    TOGGLE: ".toggle"
+    TOGGLE: ".toggle",
 }
 
 export const CLASS = {

@@ -1,12 +1,22 @@
 import {$, priorityNumberToString} from "../util/util.js"
 import {UserView} from "../view/userView.js";
-import {createUser, deleteUser, fetchTodoItems, fetchUserList, changePriority, changeToggle} from "../api/api.js";
+import {
+    createUser,
+    deleteUser,
+    fetchTodoItems,
+    fetchUserList,
+    changePriority,
+    changeToggle,
+    createItem
+} from "../api/api.js";
 import {CLASS, NODE_NAME, SELECTOR} from "../constants/constant.js";
 import {TodoListView} from "../view/todoListView.js";
+import {NewTodoView} from "../view/newTodoView.js";
 
 
 export class TodoListController {
 
+    #newTodoView
     #userView
     #todoListView
 
@@ -14,6 +24,7 @@ export class TodoListController {
     #deleteButton
 
     constructor() {
+        this.#newTodoView = new NewTodoView()
         this.#userView = new UserView()
         this.#todoListView = new TodoListView()
 
@@ -28,6 +39,7 @@ export class TodoListController {
         this.#handleUserSelection()
         this.#handleChangePriority()
         this.#handleToggle()
+        this.#handleCreateTime()
 
         const currentUserId = $(SELECTOR.ACTIVE).getAttribute("_id")
         this.#todoListView.renderItems(await fetchTodoItems(currentUserId))
@@ -101,10 +113,14 @@ export class TodoListController {
 
         document.addEventListener('keyup', async e => {
             if (condition(e)) {
+                const userId = $(SELECTOR.ACTIVE).getAttribute('_id')
+                const contents = this.#newTodoView.contents
 
+                await createItem(userId, contents)
+                this.#newTodoView.clear()
+                this.#todoListView.renderItems(await fetchTodoItems(userId))
             }
         })
-        createItem
     }
 
 }
