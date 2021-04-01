@@ -63,6 +63,7 @@ export class TodoListController {
 
             if (answer) {
                 await deleteUser(currentUser.getAttribute("_id"))
+                this.#userView.renderUsers(await fetchUserList())
             }
         })
     }
