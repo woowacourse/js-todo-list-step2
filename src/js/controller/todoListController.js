@@ -1,7 +1,7 @@
-import {$} from "../util/util.js"
+import {$, priorityNumberToString} from "../util/util.js"
 import {UserView} from "../view/userView.js";
-import {createUser, deleteUser, fetchTodoItems, fetchUserList} from "../api/api.js";
-import {CLASS, SELECTOR} from "../constants/constant.js";
+import {createUser, deleteUser, fetchTodoItems, fetchUserList, changePriority} from "../api/api.js";
+import {CLASS, NODE_NAME, SELECTOR} from "../constants/constant.js";
 import {TodoListView} from "../view/todoListView.js";
 
 
@@ -26,6 +26,7 @@ export class TodoListController {
         this.#handleUserCreation()
         this.#handleUserDelete()
         this.#handleUserSelection()
+        this.#handleChangePriority()
 
         const currentUserId = $(SELECTOR.ACTIVE).getAttribute("_id")
         this.#todoListView.renderItems(await fetchTodoItems(currentUserId))
@@ -34,7 +35,7 @@ export class TodoListController {
     #handleUserCreation() {
         this.#createButton.addEventListener('click', async e => {
             const name = prompt("생성할 유저 이름을 입력해 주세요")
-            if(name === '') return
+            if (name === '') return
 
             const result = await createUser(name)
             this.#userView.renderUsers(await fetchUserList())
@@ -47,7 +48,7 @@ export class TodoListController {
             const currentUser = this.#userView.getCurrentUser()
             const answer = confirm(`${currentUser.innerText}을 삭제하시겟습니니까?`)
 
-            if(answer) {
+            if (answer) {
                 await deleteUser(currentUser.getAttribute("_id"))
             }
         })
@@ -55,10 +56,26 @@ export class TodoListController {
 
     #handleUserSelection() {
         $(SELECTOR.USER_LIST).addEventListener('click', async e => {
-            if(e.target && e.target.classList.contains(CLASS.NAME)) {
+            if (e.target && e.target.classList.contains(CLASS.NAME)) {
                 const _id = e.target.getAttribute("_id")
                 this.#userView.toActivationUser(_id)
                 this.#todoListView.renderItems(await fetchTodoItems(_id))
+            }
+        })
+    }
+
+    #handleChangePriority() {
+        $(SELECTOR.TODO_LIST).addEventListener('change', async e => {
+            console.log(e.target)
+            if (e.target && e.target.nodeName === NODE_NAME.SELECT) {
+                const user_id = $(SELECTOR.ACTIVE).getAttribute('_id')
+                const item_id = e.target.closest("Li").getAttribute("_id")
+                const priority = priorityNumberToString(e.target.value)
+
+                console.log(priority)
+
+                const result = await changePriority(user_id, item_id, priority)
+                this.#todoListView.changePriority(result)
             }
         })
     }

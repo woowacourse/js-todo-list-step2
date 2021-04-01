@@ -14,7 +14,8 @@ export const SELECTOR = {
     FILTERS: ".filters",
     CLEAR_COMPLETED: ".clear-completed",
 
-    ACTIVE: "button.active"
+    ACTIVE: "button.active",
+    LABEL: ".label"
 }
 
 export const CLASS = {
@@ -22,12 +23,18 @@ export const CLASS = {
     SELECTED: "selected",
     PRIMARY: "primary",
     SECONDARY: "secondary",
-    NAME: "name"
+    NAME: "name",
+    SELECT: "select"
+}
+
+export const NODE_NAME = {
+    SELECT: "SELECT"
 }
 
 export const URL = {
     USER: "https://js-todo-list-9ca3a.df.r.appspot.com/api/users",
     TODO_ITEMS: userId => `https://js-todo-list-9ca3a.df.r.appspot.com/api/users/${userId}/items`,
-    DELETE: userId => `https://js-todo-list-9ca3a.df.r.appspot.com/api/users/${userId}`
+    DELETE: userId => `https://js-todo-list-9ca3a.df.r.appspot.com/api/users/${userId}`,
+    CHANGE_PRIORITY: (userId, itemId) => `https://js-todo-list-9ca3a.df.r.appspot.com/api/users/${userId}/items/${itemId}/priority`
 }
 

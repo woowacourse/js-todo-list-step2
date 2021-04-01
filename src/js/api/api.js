@@ -48,3 +48,22 @@ export const deleteUser = async (userId) => {
         alert(e)
     }
 }
+
+export const changePriority = async (userId, itemId, priority) => {
+    try {
+        const option = {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                "priority": priority
+            })
+        }
+
+        const result = await fetch(URL.CHANGE_PRIORITY(userId, itemId), option)
+        return await result.json()
+    } catch (e) {
+        alert(e)
+    }
+}

@@ -26,7 +26,7 @@ export const itemTemplate = ({_id, contents, isCompleted, priority}) => {
     </li>`
 }
 
-const priorityTemplate = (priority) => {
+export const priorityTemplate = (priority) => {
     if(priority === 'FIRST') {
         return `<span class="chip primary">1순위</span>`
     }
