@@ -61,3 +61,10 @@ export const allFilterTemplate = selected => {
 export const todoCountTemplate = count => {
     return `총 <strong>${count}</strong> 개`
 }
+
+export const userTitleTemplate = userName => {
+    return `
+        <h1 id="user-title">
+            <span><strong>${userName}</strong>'s Todo List</span>
+        </h1>`
+}

@@ -13,10 +13,12 @@ import {CLASS, NODE_NAME, SELECTOR} from "../constants/constant.js";
 import {TodoListView} from "../view/todoListView.js";
 import {NewTodoView} from "../view/newTodoView.js";
 import {TodoCountView} from "../view/todoCountView.js";
+import {SubjectView} from "../view/subjectView.js";
 
 
 export class TodoListController {
 
+    #subjectView
     #newTodoView
     #userView
     #todoListView
@@ -26,6 +28,7 @@ export class TodoListController {
     #deleteButton
 
     constructor() {
+        this.#subjectView = new SubjectView()
         this.#newTodoView = new NewTodoView()
         this.#userView = new UserView()
         this.#todoListView = new TodoListView()
@@ -36,7 +39,7 @@ export class TodoListController {
     }
 
     async init() {
-        this.#userView.renderUsers(await fetchUserList())
+
         this.#handleUserCreation()
         this.#handleUserDelete()
         this.#handleUserSelection()
@@ -45,9 +48,13 @@ export class TodoListController {
         this.#handleCreateTime()
         this.#handleDeleteItem()
 
+        this.#userView.renderUsers(await fetchUserList())
         const currentUserId = $(SELECTOR.ACTIVE).getAttribute("_id")
         this.#todoListView.renderItems(await fetchTodoItems(currentUserId))
         this.#todoListView.renderByHash()
+
+
+        this.#subjectView.render()
     }
 
     #handleUserCreation() {
@@ -79,6 +86,7 @@ export class TodoListController {
                 const _id = e.target.getAttribute("_id")
                 this.#userView.toActivationUser(_id)
                 this.#todoListView.renderItems(await fetchTodoItems(_id))
+                this.#subjectView.render()
             }
         })
     }
