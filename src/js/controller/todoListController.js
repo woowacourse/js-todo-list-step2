@@ -1,20 +1,20 @@
 import {$, priorityNumberToString} from "../util/util.js"
 import {UserView} from "../view/userView.js";
 import {
-    createUser,
-    deleteUser,
-    fetchTodoItems,
-    fetchUserList,
     changePriority,
     changeToggle,
-    createItem, deleteItem
+    createItem,
+    createUser,
+    deleteItem,
+    deleteUser,
+    fetchTodoItems,
+    fetchUserList
 } from "../api/api.js";
 import {CLASS, NODE_NAME, SELECTOR} from "../constants/constant.js";
 import {TodoListView} from "../view/todoListView.js";
 import {NewTodoView} from "../view/newTodoView.js";
 import {TodoCountView} from "../view/todoCountView.js";
 import {SubjectView} from "../view/subjectView.js";
-
 
 export class TodoListController {
 
@@ -139,7 +139,7 @@ export class TodoListController {
 
     #handleDeleteItem() {
         $(SELECTOR.TODO_LIST).addEventListener('click', async e => {
-            if(e.target && e.target.classList.contains(CLASS.DESTROY)) {
+            if (e.target && e.target.classList.contains(CLASS.DESTROY)) {
                 const userId = $(SELECTOR.ACTIVE).getAttribute('_id')
                 const itemId = e.target.closest("Li").getAttribute("_id")
 

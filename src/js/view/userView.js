@@ -1,6 +1,6 @@
 import {$, parseDomFromString} from '../util/util.js'
 import {CLASS, SELECTOR} from "../constants/constant.js"
-import {userCreateAndDeleteTemplate, userTemplate} from "../templates/templates.js"
+import {userTemplate} from "../templates/templates.js"
 
 export class UserView {
 
@@ -37,7 +37,7 @@ export class UserView {
     toActivationUser(id) {
         const $userList = $(SELECTOR.USER_LIST)
 
-        for(const childNode of $userList.childNodes) {
+        for (const childNode of $userList.childNodes) {
             childNode.classList.remove(CLASS.ACTIVE)
         }
 
