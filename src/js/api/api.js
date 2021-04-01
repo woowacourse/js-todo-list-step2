@@ -11,7 +11,7 @@ export const fetchUserList = async () => {
 
 export const fetchTodoItems = async userId => {
     try {
-        const result = await fetch(URL.TODO_ITEMS(userId))
+        const result = await fetch(URL.ITEMS(userId))
         return await result.json()
     } catch (e) {
         alert(e)
@@ -62,6 +62,38 @@ export const changePriority = async (userId, itemId, priority) => {
         }
 
         const result = await fetch(URL.CHANGE_PRIORITY(userId, itemId), option)
+        return await result.json()
+    } catch (e) {
+        alert(e)
+    }
+}
+
+export const changeToggle = async (userId, itemId) => {
+    try {
+        const option = {
+            method: 'PUT'
+        }
+
+        const result = await fetch(URL.CHANGE_TOGGLE(userId, itemId), option)
+        return await result.json()
+    } catch (e) {
+        alert(e)
+    }
+}
+
+export const createItem = async (userId, contents) => {
+    try {
+        const option = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                "contents": contents
+            })
+        }
+
+        const result = await fetch(URL.ITEMS(userId), option)
         return await result.json()
     } catch (e) {
         alert(e)

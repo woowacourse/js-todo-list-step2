@@ -1,6 +1,6 @@
 import {$, priorityNumberToString} from "../util/util.js"
 import {UserView} from "../view/userView.js";
-import {createUser, deleteUser, fetchTodoItems, fetchUserList, changePriority} from "../api/api.js";
+import {createUser, deleteUser, fetchTodoItems, fetchUserList, changePriority, changeToggle} from "../api/api.js";
 import {CLASS, NODE_NAME, SELECTOR} from "../constants/constant.js";
 import {TodoListView} from "../view/todoListView.js";
 
@@ -27,6 +27,7 @@ export class TodoListController {
         this.#handleUserDelete()
         this.#handleUserSelection()
         this.#handleChangePriority()
+        this.#handleToggle()
 
         const currentUserId = $(SELECTOR.ACTIVE).getAttribute("_id")
         this.#todoListView.renderItems(await fetchTodoItems(currentUserId))
@@ -66,7 +67,6 @@ export class TodoListController {
 
     #handleChangePriority() {
         $(SELECTOR.TODO_LIST).addEventListener('change', async e => {
-            console.log(e.target)
             if (e.target && e.target.nodeName === NODE_NAME.SELECT) {
                 const user_id = $(SELECTOR.ACTIVE).getAttribute('_id')
                 const item_id = e.target.closest("Li").getAttribute("_id")
@@ -78,6 +78,33 @@ export class TodoListController {
                 this.#todoListView.changePriority(result)
             }
         })
+    }
+
+    #handleToggle() {
+        $(SELECTOR.TODO_LIST).addEventListener('change', async e => {
+            if (e.target && e.target.classList.contains(CLASS.TOGGLE)) {
+                const user_id = $(SELECTOR.ACTIVE).getAttribute('_id')
+                const item_id = e.target.closest("Li").getAttribute("_id")
+
+                const result = await changeToggle(user_id, item_id)
+                this.#todoListView.changeCompleted(result)
+            }
+        })
+    }
+
+    #handleCreateTime() {
+        const condition = ({keyCode}) => {
+            return keyCode === 13 &&
+                [...document.activeElement.classList]
+                    .find(cls => cls === "edit") === undefined
+        }
+
+        document.addEventListener('keyup', async e => {
+            if (condition(e)) {
+
+            }
+        })
+        createItem
     }
 
 }

@@ -15,7 +15,8 @@ export const SELECTOR = {
     CLEAR_COMPLETED: ".clear-completed",
 
     ACTIVE: "button.active",
-    LABEL: ".label"
+    LABEL: ".label",
+    TOGGLE: ".toggle"
 }
 
 export const CLASS = {
@@ -24,7 +25,10 @@ export const CLASS = {
     PRIMARY: "primary",
     SECONDARY: "secondary",
     NAME: "name",
-    SELECT: "select"
+    SELECT: "select",
+    CHECKED: "checked",
+    COMPLETED: "completed",
+    TOGGLE: "toggle"
 }
 
 export const NODE_NAME = {
@@ -33,8 +37,9 @@ export const NODE_NAME = {
 
 export const URL = {
     USER: "https://js-todo-list-9ca3a.df.r.appspot.com/api/users",
-    TODO_ITEMS: userId => `https://js-todo-list-9ca3a.df.r.appspot.com/api/users/${userId}/items`,
+    ITEMS: userId => `https://js-todo-list-9ca3a.df.r.appspot.com/api/users/${userId}/items`,
     DELETE: userId => `https://js-todo-list-9ca3a.df.r.appspot.com/api/users/${userId}`,
-    CHANGE_PRIORITY: (userId, itemId) => `https://js-todo-list-9ca3a.df.r.appspot.com/api/users/${userId}/items/${itemId}/priority`
+    CHANGE_PRIORITY: (userId, itemId) => `https://js-todo-list-9ca3a.df.r.appspot.com/api/users/${userId}/items/${itemId}/priority`,
+    CHANGE_TOGGLE: (userId, itemId) => `https://js-todo-list-9ca3a.df.r.appspot.com/api/users/${userId}/items/${itemId}/toggle`
 }
 

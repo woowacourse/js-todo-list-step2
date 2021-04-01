@@ -1,5 +1,5 @@
 import {$, parseDomFromString} from '../util/util.js'
-import {SELECTOR} from "../constants/constant.js";
+import {CLASS, SELECTOR} from "../constants/constant.js";
 import {itemTemplate, priorityTemplate} from "../templates/templates.js";
 
 export class TodoListView {
@@ -25,6 +25,19 @@ export class TodoListView {
         $label.innerHTML = ''
         $label.appendChild(parseDomFromString(priorityTemplate(priority)))
         $label.append(contents)
+    }
+
+    changeCompleted({_id, isCompleted}) {
+        const $item = $(`li[_id="${_id}"]`)
+        const $toggle = $item.querySelector(SELECTOR.TOGGLE)
+
+        if(isCompleted) {
+            $toggle.setAttribute(CLASS.CHECKED, '')
+            $item.className = CLASS.COMPLETED
+        } else {
+            $toggle.removeAttribute(CLASS.CHECKED)
+            $item.className = ''
+        }
     }
 
 }
