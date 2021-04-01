@@ -25,10 +25,10 @@ export const CLASS = {
     PRIMARY: "primary",
     SECONDARY: "secondary",
     NAME: "name",
-    SELECT: "select",
     CHECKED: "checked",
     COMPLETED: "completed",
-    TOGGLE: "toggle"
+    TOGGLE: "toggle",
+    ALL: "all"
 }
 
 export const NODE_NAME = {

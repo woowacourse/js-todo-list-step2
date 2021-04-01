@@ -13,8 +13,24 @@ export class TodoListView {
     renderItems(items) {
         this.#todoList.innerHTML = ''
 
-        for(const item of items) {
+        for (const item of items) {
             this.#todoList.appendChild(parseDomFromString(itemTemplate(item)))
+        }
+    }
+
+    renderByHash() {
+        let hash = document.location.hash.substring(1)
+
+        let condition = () => false
+        if (hash === CLASS.ACTIVE) condition = $item => $item.classList.contains(CLASS.COMPLETED)
+        if (hash === CLASS.COMPLETED) condition = $item => !$item.classList.contains(CLASS.COMPLETED)
+
+        for (const $item of this.#todoList.childNodes) {
+            if (condition($item)) {
+                $item.setAttribute('hidden', '')
+            } else {
+                $item.removeAttribute('hidden')
+            }
         }
     }
 
@@ -31,7 +47,7 @@ export class TodoListView {
         const $item = $(`li[_id="${_id}"]`)
         const $toggle = $item.querySelector(SELECTOR.TOGGLE)
 
-        if(isCompleted) {
+        if (isCompleted) {
             $toggle.setAttribute(CLASS.CHECKED, '')
             $item.className = CLASS.COMPLETED
         } else {

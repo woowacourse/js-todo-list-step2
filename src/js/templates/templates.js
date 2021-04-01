@@ -1,3 +1,5 @@
+import {CLASS} from "../constants/constant.js";
+
 export const userTemplate = ({_id, name}) => {
     return `<button _id="${_id}"  class="ripple name">${name}</button>`;
 }
@@ -13,7 +15,7 @@ export const userCreateAndDeleteTemplate = () => {
 }
 
 export const itemTemplate = ({_id, contents, isCompleted, priority}) => {
-    return`<li ${isCompleted ? `class="completed"` : ""} _id="${_id}">
+    return `<li ${isCompleted ? `class="completed"` : ""} _id="${_id}">
         <div class="view">
             <input class="toggle" type="checkbox" ${isCompleted ? `checked` : ""}/>
             <label class="label">
@@ -27,11 +29,11 @@ export const itemTemplate = ({_id, contents, isCompleted, priority}) => {
 }
 
 export const priorityTemplate = (priority) => {
-    if(priority === 'FIRST') {
+    if (priority === 'FIRST') {
         return `<span class="chip primary">1순위</span>`
     }
 
-    if(priority === 'SECOND') {
+    if (priority === 'SECOND') {
         return `<span class="chip secondary">2순위</span>`
     }
 
@@ -40,4 +42,18 @@ export const priorityTemplate = (priority) => {
                 <option value="1">1순위</option>
                 <option value="2">2순위</option>
             </select>`
+}
+
+export const allFilterTemplate = selected => {
+    return `<ul class="filters">
+                <li>
+                    <a href="#" class="all ${selected === '' ? CLASS.SELECTED : ""}">전체보기</a>
+                </li>
+                <li>
+                    <a href="#active" class="active ${selected === CLASS.ACTIVE ? CLASS.SELECTED : ""}">해야할 일</a>
+                </li>
+                <li>
+                    <a href="#completed" class="completed ${selected === CLASS.COMPLETED ? CLASS.SELECTED : ""}">완료한 일</a>
+                </li>
+          </ul>`
 }
