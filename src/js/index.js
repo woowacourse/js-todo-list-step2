@@ -1,3 +1,6 @@
+import * as form from "./requestForm.js";
+import {todoTemplate} from "./todoItemTemplate.js";
+
 const BASE_URL = 'https://js-todo-list-9ca3a.df.r.appspot.com';
 const userTitle = document.getElementById("user-title");
 const userList = document.getElementById("user-list");
@@ -7,17 +10,8 @@ const todoList = document.querySelector(".todo-list");
 const todoInput = document.querySelector(".new-todo");
 const deleteAllButton = document.querySelector(".clear-completed");
 
-function getRequestForm() {
-    return {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    };
-}
-
 async function showAllUsers(userId) {
-    const showAllUsersResponse = await fetch(BASE_URL + "/api/users", getRequestForm());
+    const showAllUsersResponse = await fetch(BASE_URL + "/api/users", form.getRequestForm());
     const allUsers = await showAllUsersResponse.json();
     for (let i = 0; i < allUsers.length; i++) {
         if (document.getElementById(allUsers[i]._id) == null) {
@@ -46,7 +40,7 @@ function showActiveUser(userId) {
 
 async function userLoad(userId) {
     userTitle.removeChild(userTitle.firstChild);
-    const userLoadResponse = await fetch(BASE_URL + "/api/users/" + userId, getRequestForm());
+    const userLoadResponse = await fetch(BASE_URL + "/api/users/" + userId, form.getRequestForm());
     const user = await userLoadResponse.json();
     userTitle.insertAdjacentHTML("beforeend", `<span><strong>${user.name}</strong>'s Todo List</span>`);
 }
@@ -60,24 +54,10 @@ function active(activeUser) {
     userLoad(activeUser.id);
 }
 
-function createUserForm(userName) {
-    const newUser = {
-        name: userName
-    };
-
-    return {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(newUser)
-    };
-}
-
 async function userCreateHandler() {
     const userName = prompt("추가하고 싶은 이름을 입력해주세요.");
     if (userName.length >= 2) {
-        const userForm = createUserForm(userName);
+        const userForm = form.createUserForm(userName);
         const createdUserId = await createUser(userForm);
         await showAllUsers(createdUserId);
     } else {
@@ -101,7 +81,7 @@ function selectUser(event) {
 }
 
 async function showActiveUserTodo(activeUser) {
-    const todoByUserIdResponse = await fetch(BASE_URL + "/api/users/" + activeUser.id, getRequestForm());
+    const todoByUserIdResponse = await fetch(BASE_URL + "/api/users/" + activeUser.id, form.getRequestForm());
     const todo = await todoByUserIdResponse.json();
     const activeUserTodo = todo.todoList;
     removeOtherTodo();
@@ -118,59 +98,13 @@ function removeOtherTodo() {
     }
 }
 
-function todoTemplate(item) {
-    const priority = item.priority;
-    return `<li id=${item._id} ${item.isCompleted === true ? `class = "completed"` : ``}>
-              <div class="view">
-                <input class="toggle" type="checkbox" ${item.isCompleted === true ? `checked` : ``}/>
-                <label class="label">
-                ${item.priority === "NONE"
-        ? `<select class="chip select">
-                    <option value="0" selected>순위</option>
-                    <option value="1">1순위</option>
-                    <option value="2">2순위</option>
-                  </select>`
-        : (priority === "FIRST" ?
-            `<span class="chip primary">1순위</span>` :
-            `<span class="chip secondary">2순위</span>`)}
-                  ${item.contents}
-                </label>
-                <button class="destroy"></button>
-              </div>
-              <input class="edit" value=${item.contents} />
-            </li>`;
-}
-
-function deleteForm() {
-    return {
-        method: 'DELETE',
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    };
-}
-
 async function deleteUserById() {
     const activeUser = document.querySelector(".active");
-    await fetch(BASE_URL + "/api/users/" + activeUser.id, deleteForm());
+    await fetch(BASE_URL + "/api/users/" + activeUser.id, form.deleteForm());
     userDeleteButton.classList.remove("active");
     const deletedUser = document.getElementById(activeUser.id);
     userList.removeChild(deletedUser);
     showActiveUser();
-}
-
-function addContentForm(content) {
-    const newContents = {
-        contents: content
-    };
-
-    return {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(newContents)
-    };
 }
 
 async function addTodoByUser(event) {
@@ -181,7 +115,7 @@ async function addTodoByUser(event) {
             return;
         }
         const activeUser = document.querySelector(".active");
-        const addTodoResponse = await fetch(BASE_URL + "/api/users/" + activeUser.id + "/items", addContentForm(content));
+        const addTodoResponse = await fetch(BASE_URL + "/api/users/" + activeUser.id + "/items", form.addContentForm(content));
         const newTodo = await addTodoResponse.json();
         todoList.insertAdjacentHTML("beforeend", todoTemplate(newTodo));
         todoInput.value = "";
@@ -189,65 +123,28 @@ async function addTodoByUser(event) {
     }
 }
 
-function editContentForm(content) {
-    const newContents = {
-        contents: content
-    };
-
-    return {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(newContents)
-    };
-}
-
 async function editTodoContent(activeUser, itemId, content) {
-    const editTodoResponse = await fetch(BASE_URL + "/api/users/" + activeUser.id + "/items/" + itemId, editContentForm(content));
+    const editTodoResponse = await fetch(BASE_URL + "/api/users/" + activeUser.id + "/items/" + itemId, form.editContentForm(content));
     return await editTodoResponse.json();
 }
 
-function toggleCompleteForm() {
-    return {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    };
-}
-
 async function toggleComplete(activeUser, itemId) {
-    const toggleCompleteResponse = await fetch(BASE_URL + "/api/users/" + activeUser.id + "/items/" + itemId + "/toggle", toggleCompleteForm());
+    const toggleCompleteResponse = await fetch(BASE_URL + "/api/users/" + activeUser.id + "/items/" + itemId + "/toggle", form.toggleCompleteForm());
     return await toggleCompleteResponse.json();
 }
 
 async function deleteAll() {
     const activeUser = document.querySelector(".active");
-    await fetch(BASE_URL + "/api/users/" + activeUser.id + "/items/", deleteForm());
+    await fetch(BASE_URL + "/api/users/" + activeUser.id + "/items/", form.deleteForm());
     showActiveUserTodo(activeUser);
 }
 
 async function deleteOne(activeUser, itemId) {
-    await fetch(BASE_URL + "/api/users/" + activeUser.id + "/items/" + itemId, deleteForm());
-}
-
-function changePriorityForm(priority) {
-    const todo = {
-        priority: priority
-    };
-
-    return {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(todo)
-    };
+    await fetch(BASE_URL + "/api/users/" + activeUser.id + "/items/" + itemId, form.deleteForm());
 }
 
 async function changePriority(activeUser, itemId, priority) {
-    await fetch(BASE_URL + "/api/users/" + activeUser.id + "/items/" + itemId + "/priority", changePriorityForm(priority));
+    await fetch(BASE_URL + "/api/users/" + activeUser.id + "/items/" + itemId + "/priority", form.changePriorityForm(priority));
 }
 
 function updateCount() {
