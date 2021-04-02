@@ -108,15 +108,20 @@ function removeOtherTodo() {
 }
 
 function todoTemplate(item) {
+    const priority = item.priority;
     return `<li id=${item._id} ${item.isCompleted === true ? `class = "completed"` : ``}>
               <div class="view">
                 <input class="toggle" type="checkbox" ${item.isCompleted === true ? `checked` : ``}/>
                 <label class="label">
-                  <select class="chip select">
+                ${item.priority === "NONE"
+        ? `<select class="chip select">
                     <option value="0" selected>순위</option>
                     <option value="1">1순위</option>
                     <option value="2">2순위</option>
-                  </select>
+                  </select>`
+        : (priority === "FIRST" ?
+            `<span class="chip primary">1순위</span>` :
+            `<span class="chip secondary">2순위</span>`)}
                   ${item.contents}
                 </label>
                 <button class="destroy"></button>
@@ -213,7 +218,24 @@ async function deleteAll() {
 
 async function deleteOne(activeUser, itemId) {
     await fetch(BASE_URL + "/api/users/" + activeUser.id + "/items/" + itemId, deleteForm());
+}
 
+function changePriorityForm(priority) {
+    const todo = {
+        priority: priority
+    };
+
+    return {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(todo)
+    };
+}
+
+async function changePriority(activeUser, itemId, priority) {
+    await fetch(BASE_URL + "/api/users/" + activeUser.id + "/items/" + itemId + "/priority", changePriorityForm(priority));
 }
 
 showAllUsers();
@@ -261,4 +283,18 @@ todoList.addEventListener("dblclick", function (event) {
             li.classList.remove("editing");
         }
     });
+});
+
+todoList.addEventListener("change", async function (event) {
+    const activeUser = document.querySelector(".active");
+    const itemId = event.target.closest("li").id;
+    const option = event.target;
+    const selectedOption = option.options[option.selectedIndex].value;
+    if (selectedOption === "1") {
+        await changePriority(activeUser, itemId, "FIRST");
+        showActiveUserTodo(activeUser);
+    } else if (selectedOption === "2") {
+        await changePriority(activeUser, itemId, "SECOND");
+        showActiveUserTodo(activeUser);
+    }
 });
