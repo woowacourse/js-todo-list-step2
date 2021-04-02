@@ -108,7 +108,6 @@ function removeOtherTodo() {
 }
 
 function todoTemplate(item) {
-    console.log(item.isCompleted);
     return `<li id=${item._id} ${item.isCompleted === true ? `class = "completed"` : ``}>
               <div class="view">
                 <input class="toggle" type="checkbox" ${item.isCompleted === true ? `checked` : ``}/>
@@ -212,6 +211,11 @@ async function deleteAll() {
     showActiveUserTodo(activeUser);
 }
 
+async function deleteOne(activeUser, itemId) {
+    await fetch(BASE_URL + "/api/users/" + activeUser.id + "/items/" + itemId, deleteForm());
+
+}
+
 showAllUsers();
 
 userCreateButton.addEventListener("click", userCreateHandler);
@@ -221,15 +225,16 @@ todoInput.addEventListener("keypress", addTodoByUser);
 deleteAllButton.addEventListener("click", deleteAll);
 
 todoList.addEventListener("click", async function (event) {
+    const activeUser = document.querySelector(".active");
     const li = event.target.closest("li");
+    const itemId = li.id;
     if (event.target.classList.contains("toggle")) {
-        const activeUser = document.querySelector(".active");
-        const itemId = li.id;
         await toggleComplete(activeUser, itemId);
         showActiveUserTodo(activeUser);
     }
     if (event.target.classList.contains("destroy")) {
-        li.remove();
+        await deleteOne(activeUser, itemId);
+        showActiveUserTodo(activeUser);
     }
 });
 
