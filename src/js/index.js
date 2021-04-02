@@ -1,6 +1,7 @@
 const BASE_URL = 'https://js-todo-list-9ca3a.df.r.appspot.com';
 const userList = document.getElementById("user-list");
 const userCreateButton = document.querySelector(".user-create-button");
+const userDeleteButton = document.querySelector(".user-delete-button");
 const todoList = document.querySelector(".todo-list");
 
 function getRequestForm() {
@@ -122,8 +123,27 @@ function todoTemplate(item) {
             </li>`;
 }
 
+function deleteUserForm() {
+    return {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+}
 
-showAllUsers(0);
+async function deleteUserById() {
+    const activeUser = document.querySelector(".active");
+    await fetch(BASE_URL + "/api/users/" + activeUser.id, deleteUserForm());
+    userDeleteButton.classList.remove("active");
+    const deletedUser = document.getElementById(activeUser.id);
+    userList.removeChild(deletedUser);
+    showActiveUser();
+}
+
+
+showAllUsers();
 
 userCreateButton.addEventListener("click", userCreateHandler);
+userDeleteButton.addEventListener("click", deleteUserById)
 userList.addEventListener("click", selectUser);
