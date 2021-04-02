@@ -95,7 +95,7 @@ async function showActiveUserTodo(activeUser) {
     const activeUserTodo = todo.todoList;
     removeOtherTodo();
     for (let i = 0; i < activeUserTodo.length; i++) {
-        const item = activeUserTodo[i].contents;
+        const item = activeUserTodo[i];
         todoList.insertAdjacentHTML("beforeend", todoTemplate(item));
     }
 }
@@ -116,11 +116,11 @@ function todoTemplate(item) {
                     <option value="1">1순위</option>
                     <option value="2">2순위</option>
                   </select>
-                  ${item}
+                  ${item.contents}
                 </label>
                 <button class="destroy"></button>
               </div>
-              <input class="edit" value=${item} />
+              <input id=${item._id} class="edit" value=${item.contents} />
             </li>`;
 }
 
@@ -142,7 +142,7 @@ async function deleteUserById() {
     showActiveUser();
 }
 
-function createContentForm(content) {
+function addContentForm(content) {
     const newContents = {
         contents: content
     };
@@ -158,16 +158,36 @@ function createContentForm(content) {
 
 async function addTodoByUser(event) {
     const content = event.target.value;
-    if (event.key === "Enter" && content.length >= 2) {
+    if (event.key === "Enter") {
+        if (content.length < 2) {
+            alert("내용은 2글자 이상이어야합니다!");
+            return;
+        }
         const activeUser = document.querySelector(".active");
-        await fetch(BASE_URL + "/api/users/" + activeUser.id + "/items", createContentForm(content));
-        todoList.insertAdjacentHTML("beforeend", todoTemplate(content));
+        const addTodoResponse = await fetch(BASE_URL + "/api/users/" + activeUser.id + "/items", addContentForm(content));
+        const newTodo = await addTodoResponse.json();
+        todoList.insertAdjacentHTML("beforeend", todoTemplate(newTodo));
         todoInput.value = "";
     }
-    if (content.length < 2) {
-        alert("내용은 2글자 이상이어야합니다!");
-        todoInput.value = "";
-    }
+}
+
+function editContentForm(content) {
+    const newContents = {
+        contents: content
+    };
+
+    return {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(newContents)
+    };
+}
+
+async function editTodoContent(activeUser, item) {
+    const editTodoResponse = await fetch(BASE_URL + "/api/users/" + activeUser.id + "/items/" + item.id, editContentForm(item.value));
+    return await editTodoResponse.json();
 }
 
 showAllUsers();
@@ -176,3 +196,26 @@ userCreateButton.addEventListener("click", userCreateHandler);
 userDeleteButton.addEventListener("click", deleteUserById)
 userList.addEventListener("click", selectUser);
 todoInput.addEventListener("keypress", addTodoByUser);
+todoList.addEventListener("dblclick", function (event) {
+    const li = event.target.closest("li");
+    const label = li.getElementsByClassName("label")[0];
+    const editInput = li.getElementsByClassName("edit")[0];
+    const originalValue = label.innerText;
+
+    li.classList.toggle("editing");
+
+    editInput.addEventListener("keyup", async function (event) {
+        const item = event.target;
+        const content = item.value;
+        if (event.key === "Enter" && content.length >= 2) {
+            const activeUser = document.querySelector(".active");
+            await editTodoContent(activeUser, item);
+            showActiveUserTodo(activeUser);
+            li.classList.remove("editing");
+        }
+        if (event.key === "Escape") {
+            event.target.value = originalValue;
+            li.classList.remove("editing");
+        }
+    });
+});
