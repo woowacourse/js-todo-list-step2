@@ -107,9 +107,10 @@ function removeOtherTodo() {
 }
 
 function todoTemplate(item) {
-    return `<li>
+    console.log(item.isCompleted);
+    return `<li id=${item._id} ${item.isCompleted === true ? `class = "completed"` : ``}>
               <div class="view">
-                <input class="toggle" type="checkbox" />
+                <input class="toggle" type="checkbox" ${item.isCompleted === true ? `checked` : ``}/>
                 <label class="label">
                   <select class="chip select">
                     <option value="0" selected>순위</option>
@@ -120,7 +121,7 @@ function todoTemplate(item) {
                 </label>
                 <button class="destroy"></button>
               </div>
-              <input id=${item._id} class="edit" value=${item.contents} />
+              <input class="edit" value=${item.contents} />
             </li>`;
 }
 
@@ -185,9 +186,23 @@ function editContentForm(content) {
     };
 }
 
-async function editTodoContent(activeUser, item) {
-    const editTodoResponse = await fetch(BASE_URL + "/api/users/" + activeUser.id + "/items/" + item.id, editContentForm(item.value));
+async function editTodoContent(activeUser, itemId, content) {
+    const editTodoResponse = await fetch(BASE_URL + "/api/users/" + activeUser.id + "/items/" + itemId, editContentForm(content));
     return await editTodoResponse.json();
+}
+
+function toggleCompleteForm() {
+    return {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+}
+
+async function toggleComplete(activeUser, itemId) {
+    const toggleCompleteResponse = await fetch(BASE_URL + "/api/users/" + activeUser.id + "/items/" + itemId + "/toggle", toggleCompleteForm());
+    return await toggleCompleteResponse.json();
 }
 
 showAllUsers();
@@ -196,6 +211,20 @@ userCreateButton.addEventListener("click", userCreateHandler);
 userDeleteButton.addEventListener("click", deleteUserById)
 userList.addEventListener("click", selectUser);
 todoInput.addEventListener("keypress", addTodoByUser);
+
+todoList.addEventListener("click", async function (event) {
+    const li = event.target.closest("li");
+    if (event.target.classList.contains("toggle")) {
+        const activeUser = document.querySelector(".active");
+        const itemId = li.id;
+        await toggleComplete(activeUser, itemId);
+        showActiveUserTodo(activeUser);
+    }
+    if (event.target.classList.contains("destroy")) {
+        li.remove();
+    }
+});
+
 todoList.addEventListener("dblclick", function (event) {
     const li = event.target.closest("li");
     const label = li.getElementsByClassName("label")[0];
@@ -206,10 +235,11 @@ todoList.addEventListener("dblclick", function (event) {
 
     editInput.addEventListener("keyup", async function (event) {
         const item = event.target;
+        const itemId = item.parentNode.id;
         const content = item.value;
         if (event.key === "Enter" && content.length >= 2) {
             const activeUser = document.querySelector(".active");
-            await editTodoContent(activeUser, item);
+            await editTodoContent(activeUser, itemId, content);
             showActiveUserTodo(activeUser);
             li.classList.remove("editing");
         }
