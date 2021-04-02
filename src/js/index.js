@@ -1,4 +1,5 @@
 const BASE_URL = 'https://js-todo-list-9ca3a.df.r.appspot.com';
+const userTitle = document.getElementById("user-title");
 const userList = document.getElementById("user-list");
 const userCreateButton = document.querySelector(".user-create-button");
 const userDeleteButton = document.querySelector(".user-delete-button");
@@ -36,10 +37,18 @@ function showActiveUser(userId) {
         const defaultUser = userList.firstChild;
         defaultUser.classList.add("active");
         activeUser = defaultUser;
+        userLoad(activeUser.id);
     } else {
         active(activeUser);
     }
     showActiveUserTodo(activeUser);
+}
+
+async function userLoad(userId) {
+    userTitle.removeChild(userTitle.firstChild);
+    const userLoadResponse = await fetch(BASE_URL + "/api/users/" + userId, getRequestForm());
+    const user = await userLoadResponse.json();
+    userTitle.insertAdjacentHTML("beforeend", `<span><strong>${user.name}</strong>'s Todo List</span>`);
 }
 
 function active(activeUser) {
@@ -48,6 +57,7 @@ function active(activeUser) {
         activeUsers[i].classList.remove("active");
     }
     activeUser.classList.add("active");
+    userLoad(activeUser.id);
 }
 
 function createUserForm(userName) {
