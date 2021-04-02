@@ -3,6 +3,7 @@ const userList = document.getElementById("user-list");
 const userCreateButton = document.querySelector(".user-create-button");
 const userDeleteButton = document.querySelector(".user-delete-button");
 const todoList = document.querySelector(".todo-list");
+const todoInput = document.querySelector(".new-todo");
 
 function getRequestForm() {
     return {
@@ -141,9 +142,37 @@ async function deleteUserById() {
     showActiveUser();
 }
 
+function createContentForm(content) {
+    const newContents = {
+        contents: content
+    };
+
+    return {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(newContents)
+    };
+}
+
+async function addTodoByUser(event) {
+    const content = event.target.value;
+    if (event.key === "Enter" && content.length >= 2) {
+        const activeUser = document.querySelector(".active");
+        await fetch(BASE_URL + "/api/users/" + activeUser.id + "/items", createContentForm(content));
+        todoList.insertAdjacentHTML("beforeend", todoTemplate(content));
+        todoInput.value = "";
+    }
+    if (content.length < 2) {
+        alert("내용은 2글자 이상이어야합니다!");
+        todoInput.value = "";
+    }
+}
 
 showAllUsers();
 
 userCreateButton.addEventListener("click", userCreateHandler);
 userDeleteButton.addEventListener("click", deleteUserById)
 userList.addEventListener("click", selectUser);
+todoInput.addEventListener("keypress", addTodoByUser);
