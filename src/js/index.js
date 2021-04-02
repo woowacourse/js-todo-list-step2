@@ -4,6 +4,7 @@ const userCreateButton = document.querySelector(".user-create-button");
 const userDeleteButton = document.querySelector(".user-delete-button");
 const todoList = document.querySelector(".todo-list");
 const todoInput = document.querySelector(".new-todo");
+const deleteAllButton = document.querySelector(".clear-completed");
 
 function getRequestForm() {
     return {
@@ -125,7 +126,7 @@ function todoTemplate(item) {
             </li>`;
 }
 
-function deleteUserForm() {
+function deleteForm() {
     return {
         method: 'DELETE',
         headers: {
@@ -136,7 +137,7 @@ function deleteUserForm() {
 
 async function deleteUserById() {
     const activeUser = document.querySelector(".active");
-    await fetch(BASE_URL + "/api/users/" + activeUser.id, deleteUserForm());
+    await fetch(BASE_URL + "/api/users/" + activeUser.id, deleteForm());
     userDeleteButton.classList.remove("active");
     const deletedUser = document.getElementById(activeUser.id);
     userList.removeChild(deletedUser);
@@ -205,12 +206,19 @@ async function toggleComplete(activeUser, itemId) {
     return await toggleCompleteResponse.json();
 }
 
+async function deleteAll() {
+    const activeUser = document.querySelector(".active");
+    await fetch(BASE_URL + "/api/users/" + activeUser.id + "/items/", deleteForm());
+    showActiveUserTodo(activeUser);
+}
+
 showAllUsers();
 
 userCreateButton.addEventListener("click", userCreateHandler);
 userDeleteButton.addEventListener("click", deleteUserById)
 userList.addEventListener("click", selectUser);
 todoInput.addEventListener("keypress", addTodoByUser);
+deleteAllButton.addEventListener("click", deleteAll);
 
 todoList.addEventListener("click", async function (event) {
     const li = event.target.closest("li");
