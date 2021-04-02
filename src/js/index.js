@@ -109,6 +109,7 @@ async function showActiveUserTodo(activeUser) {
         const item = activeUserTodo[i];
         todoList.insertAdjacentHTML("beforeend", todoTemplate(item));
     }
+    updateCount();
 }
 
 function removeOtherTodo() {
@@ -184,6 +185,7 @@ async function addTodoByUser(event) {
         const newTodo = await addTodoResponse.json();
         todoList.insertAdjacentHTML("beforeend", todoTemplate(newTodo));
         todoInput.value = "";
+        updateCount();
     }
 }
 
@@ -246,6 +248,20 @@ function changePriorityForm(priority) {
 
 async function changePriority(activeUser, itemId, priority) {
     await fetch(BASE_URL + "/api/users/" + activeUser.id + "/items/" + itemId + "/priority", changePriorityForm(priority));
+}
+
+function updateCount() {
+    let count = 0;
+    const allTodoList = todoList.childNodes;
+    for (let todo of allTodoList) {
+        count++;
+
+    }
+    document.querySelector(".todo-count").innerHTML = countTemplate(count);
+}
+
+function countTemplate(count) {
+    return `총<strong>${count}</strong>개`;
 }
 
 showAllUsers();
