@@ -69,4 +69,14 @@ export class TodoListView {
         $item.remove()
     }
 
+    toEditMode(itemId) {
+        const $item = $(SELECTOR.TODO_LIST).querySelector(`li[_id="${itemId}"]`)
+        $item.className = CLASS.EDITING
+    }
+
+    toViewMode() {
+        const $item = $(SELECTOR.EDITING)
+        $item.classList.remove(CLASS.EDITING)
+    }
+
 }

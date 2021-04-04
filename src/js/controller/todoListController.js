@@ -6,7 +6,7 @@ import {
     createItem,
     createUser,
     deleteItem,
-    deleteUser,
+    deleteUser, editItem,
     fetchTodoItems,
     fetchUserList
 } from "../api/api.js";
@@ -47,12 +47,12 @@ export class TodoListController {
         this.#handleToggle()
         this.#handleCreateTime()
         this.#handleDeleteItem()
+        this.#handleEditItem()
 
         this.#userView.renderUsers(await fetchUserList())
         const currentUserId = $(SELECTOR.ACTIVE).getAttribute("_id")
         this.#todoListView.renderItems(await fetchTodoItems(currentUserId))
         this.#todoListView.renderByHash()
-
 
         this.#subjectView.render()
     }
@@ -98,8 +98,6 @@ export class TodoListController {
                 const user_id = $(SELECTOR.ACTIVE).getAttribute('_id')
                 const item_id = e.target.closest("Li").getAttribute("_id")
                 const priority = priorityNumberToString(e.target.value)
-
-                console.log(priority)
 
                 const result = await changePriority(user_id, item_id, priority)
                 this.#todoListView.changePriority(result)
@@ -147,6 +145,39 @@ export class TodoListController {
                 await deleteItem(userId, itemId)
                 this.#todoListView.delete(itemId)
                 this.#todoCountView.renderByHash()
+            }
+        })
+    }
+
+    #handleEditItem() {
+        $(SELECTOR.TODO_LIST).addEventListener('dblclick', async e => {
+            if (e.target && e.target.classList.contains(CLASS.LABEL)) {
+                const itemId = e.target.closest("Li").getAttribute("_id")
+
+                this.#todoListView.toEditMode(itemId)
+            }
+        })
+
+        const condition = ({keyCode}) => {
+            return keyCode === 13 &&
+                [...document.activeElement.classList]
+                    .find(cls => cls === "edit") !== undefined
+        }
+
+        document.addEventListener('keyup', async e => {
+            if(condition(e)) {
+                const itemId = e.target.closest("Li").getAttribute("_id")
+                const userId = $(SELECTOR.ACTIVE).getAttribute("_id")
+                const contents = e.target.closest(SELECTOR.EDIT).value
+
+                await editItem(userId, itemId, contents)
+                this.#todoListView.renderItems(await fetchTodoItems(userId))
+            }
+        })
+
+        document.addEventListener('keyup', e => {
+            if( e.key === "Escape" && $(SELECTOR.TODO_LIST).querySelector(SELECTOR.EDITING) !== null) {
+                this.#todoListView.toViewMode()
             }
         })
     }

@@ -6,7 +6,6 @@ export class NewTodoView {
 
     constructor() {
         this.#newTodo = $(SELECTOR.NEW_TODO)
-        console.log(this.#newTodo)
     }
 
     clear() {

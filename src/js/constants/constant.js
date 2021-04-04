@@ -17,6 +17,8 @@ export const SELECTOR = {
     ACTIVE: "button.active",
     LABEL: ".label",
     TOGGLE: ".toggle",
+
+    EDITING: ".editing",
 }
 
 export const CLASS = {
@@ -30,6 +32,8 @@ export const CLASS = {
     TOGGLE: "toggle",
     ALL: "all",
     DESTROY: "destroy",
+    EDITING: "editing",
+    LABEL: "label",
 }
 
 export const NODE_NAME = {
@@ -43,6 +47,7 @@ export const URL = {
     CHANGE_PRIORITY: (userId, itemId) => `https://js-todo-list-9ca3a.df.r.appspot.com/api/users/${userId}/items/${itemId}/priority`,
     CHANGE_TOGGLE: (userId, itemId) => `https://js-todo-list-9ca3a.df.r.appspot.com/api/users/${userId}/items/${itemId}/toggle`,
     DELETE_ALL_ITEMS: userId => `https://js-todo-list-9ca3a.df.r.appspot.com/api/users/${userId}/items`,
-    DELETE_ITEM: (userId, itemId) => `https://js-todo-list-9ca3a.df.r.appspot.com/api/users/${userId}/items/${itemId}`
+    DELETE_ITEM: (userId, itemId) => `https://js-todo-list-9ca3a.df.r.appspot.com/api/users/${userId}/items/${itemId}`,
+    EDIT_ITEM: (userId, itemId) => `https://js-todo-list-9ca3a.df.r.appspot.com/api/users/${userId}/items/${itemId}`,
 }
 

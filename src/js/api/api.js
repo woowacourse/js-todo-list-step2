@@ -123,3 +123,22 @@ export const deleteItem = async (userId, itemId) => {
         alert(e)
     }
 }
+
+export const editItem = async (userId, itemId, contents) => {
+    try {
+        const option = {
+            method: 'PUT',
+            headers: {
+                'Content-Type' : 'application/json'
+            },
+            body: JSON.stringify({
+                "contents": contents
+            })
+        }
+
+        const result = await fetch(URL.EDIT_ITEM(userId, itemId), option)
+        return await result.json()
+    } catch (e) {
+        alert(e)
+    }
+}
