@@ -60,7 +60,10 @@ export class TodoListController {
     #handleUserCreation() {
         this.#createButton.addEventListener('click', async e => {
             const name = prompt("생성할 유저 이름을 입력해 주세요")
-            if (name === '') return
+            if (name.length < 2) {
+                alert('유저 이름은 2글자 이상이어야 합니다.')
+                return
+            }
 
             const result = await createUser(name)
             this.#userView.renderUsers(await fetchUserList())
@@ -128,6 +131,10 @@ export class TodoListController {
             if (condition(e)) {
                 const userId = $(SELECTOR.ACTIVE).getAttribute('_id')
                 const contents = this.#newTodoView.contents
+                if(contents.length < 2) {
+                    alert('내용은 최소 2글자 이상이어야 합니다.')
+                    return
+                }
 
                 await createItem(userId, contents)
                 this.#newTodoView.clear()
