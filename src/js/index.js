@@ -1,7 +1,11 @@
-const onUserCreateHandler = () => {
-  const userName = prompt("추가하고 싶은 이름을 입력해주세요.");
-}
+import {TodoListController} from "./controller/todoListController.js";
+import {BottomController} from "./controller/bottomController.js";
 
-const userCreateButton = document.querySelector('.user-create-button')
-userCreateButton.addEventListener('click', onUserCreateHandler)
+const todoListController = new TodoListController()
+const filterController = new BottomController()
+
+await todoListController.init()
+filterController.init()
+
+
 

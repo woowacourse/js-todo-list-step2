@@ -27,29 +27,42 @@
 
 ## 🎯 요구사항
 
-- [ ] 1. User 추가하기
-- [ ] 2. User의 투두리스트 불러오기
-- [ ] 3. User 삭제하기
-- [ ] 3. todoItem 추가하기
-- [ ] 4. todoItem 불러오기
-- [ ] 5. todoItem complete하기
-- [ ] 6. todoItem 삭제하기
-- [ ] 7. todoItem contents 내용 수정하기
+- [x] 
+    1. User 추가하기
+- [x] 
+    2. User의 투두리스트 불러오기
+- [x] 
+    3. User 삭제하기
+- [x] 
+    3. todoItem 추가하기
+- [x] 
+    4. todoItem 불러오기
+- [x] 
+    5. todoItem complete하기
+- [x] 
+    6. todoItem 삭제하기
+- [x] 
+    7. todoItem contents 내용 수정하기
 
 <br/>
 
 ## 🎯🎯 심화 요구사항
 
-- [ ] 1. fetch api 사용하는 부분을 async await을 사용하여 리팩토링하기.
-- [ ] 2. github issue에서 라벨을 붙이는 것처럼, 우선순위에 따라서 label를 추가하기.
-- [ ] 3. ES6 impot & export를 이용해 자바스크립트 파일을 리팩토링하기.
+- [x] 
+    1. fetch api 사용하는 부분을 async await을 사용하여 리팩토링하기.
+- [x] 
+    2. github issue에서 라벨을 붙이는 것처럼, 우선순위에 따라서 label를 추가하기.
+- [x] 
+    3. ES6 impot & export를 이용해 자바스크립트 파일을 리팩토링하기.
 
 <br/>
 
 ## 🕵️‍♂️ 제약사항
 
-- [ ] 1. User의 이름은 최소 2글자 이상이어야 한다.
-- [ ] 2. TodoItem Contents는 최소 2글자 이상이어야 한다.
+- [x] 
+    1. User의 이름은 최소 2글자 이상이어야 한다.
+- [x] 
+    2. TodoItem Contents는 최소 2글자 이상이어야 한다.
 
 <br/>
 
@@ -241,7 +254,8 @@
 
 #### <img alt="Tip" src="https://img.shields.io/static/v1.svg?label=&message=Tip&style=flat-square&color=673ab8"> 로컬에서 서버 띄워서 손쉽게 static resources 변경 및 확인하는 방법
 
-로컬에서 웹서버를 띄워 html, css, js 등을 실시간으로 손쉽게 테스트해 볼 수 있습니다. 이를 위해서는 우선 npm이 설치되어 있어야 합니다. 구글에 `npm install` 이란 키워드로 각자의 운영체제에 맞게끔 npm을 설치해주세요. 이후 아래의 명령어를 통해 실시간으로 웹페이지를 테스트해볼 수 있습니다.
+로컬에서 웹서버를 띄워 html, css, js 등을 실시간으로 손쉽게 테스트해 볼 수 있습니다. 이를 위해서는 우선 npm이 설치되어 있어야 합니다. 구글에 `npm install` 이란 키워드로 각자의 운영체제에
+맞게끔 npm을 설치해주세요. 이후 아래의 명령어를 통해 실시간으로 웹페이지를 테스트해볼 수 있습니다.
 
 ```
 npm install -g live-server
