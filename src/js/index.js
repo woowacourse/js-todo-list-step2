@@ -1,6 +1,8 @@
 
 const userCreateButton = document.querySelector('.user-create-button')
 userCreateButton.addEventListener('click', onUserCreateHandler)
+const userDeleteButton = document.querySelector('.user-delete-button')
+userDeleteButton.addEventListener('click', deleteUser)
 const $userItem = document.querySelector(".user-list");
 $userItem.addEventListener('click', selectUser);
 
@@ -12,8 +14,23 @@ function onUserCreateHandler() {
   }
 }
 
+function deleteUser() {
+  const user = document.querySelector(".active");
+  const ans = confirm(user.textContent + "을 삭제하시겠습니까?");
+  if(ans) {
+    user.remove();
+  }
+}
+
 function onAddUserItem(userName) {
   return ` <button class="ripple">${userName}</button> `;
+}
+
+function selectUser(event) {
+  if(event.target.classList.contains("management")) {
+    return;
+  }
+  active(event.target.closest("button"));
 }
 
 function active(user) {
@@ -22,8 +39,4 @@ function active(user) {
     users[i].classList.remove("active");
   }
   user.classList.add("active");
-}
-
-function selectUser(event) {
-  active(event.target.closest("button"));
 }
