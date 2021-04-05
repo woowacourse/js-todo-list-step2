@@ -8,10 +8,12 @@ $userItem.addEventListener('click', selectUser);
 
 function onUserCreateHandler() {
   const userName = prompt("추가하고 싶은 이름을 입력해주세요.");
-  if(userName !== null) {
-    const todoList = document.getElementById("user-list");
-    todoList.insertAdjacentHTML("afterbegin", onAddUserItem(userName));
+  if(userName.length < 2) {
+    alert("2글자 이상이어야 합니다.")
+    return;
   }
+  const todoList = document.getElementById("user-list");
+  todoList.insertAdjacentHTML("afterbegin", onAddUserItem(userName));
 }
 
 function deleteUser() {
