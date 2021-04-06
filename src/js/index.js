@@ -1,6 +1,7 @@
 window.onload = setUpUserList;
 const url = "https://js-todo-list-9ca3a.df.r.appspot.com";
 const userList = document.getElementById('user-list');
+const todoList = document.querySelector('.todo-list');
 const onUserCreateHandler = () => {
     const userName = prompt("추가하고 싶은 이름을 입력해주세요.");
     addUser(userName);
@@ -50,7 +51,7 @@ async function updateUserList() {
 
 function clearUserList(data) {
     const count = userList.children.length;
-    for (let i = 0; i < count -2; i++) {
+    for (let i = 0; i < count - 2; i++) {
         userList.removeChild(userList.firstChild)
     }
     return data;
@@ -71,6 +72,29 @@ function selectUser(e) {
     const selectedUser = document.querySelector('.active')
     selectedUser.classList.remove('active');
     e.target.classList.add('active');
+    showSelectedUserTodo(e.target.id);
+}
+
+function showSelectedUserTodo(userId) {
+    fetch(url + `/api/users/${userId}/items/`)
+        .then((response) => response.json())
+        .then((data) => updateTodos(data))
+}
+
+function updateTodos(todos) {
+    todoList.innerHTML = '';
+    for (let i = 0; i < todos.length; i++) {
+        let todoLI =
+            ` <li id=${todos[i].id}>
+                 <div class="view">
+                    <input class="toggle" onclick= "onToggletodo" type="checkbox" />
+                    <label class="label" ondblclick= "onEditItem">${todos[i].contents}</label>
+                    <button class="destroy" onclick= "onDeleteItem"></button>
+                 </div>
+                 <input class="edit" value=${todos[i].contents} />
+             </li>`
+        todoList.insertAdjacentHTML('beforeend', todoLI);
+    }
 }
 
 const userCreateButton = document.querySelector('.user-create-button')
