@@ -2,6 +2,71 @@ window.onload = setUpUserList;
 const url = "https://js-todo-list-9ca3a.df.r.appspot.com";
 const userList = document.getElementById('user-list');
 const todoList = document.querySelector('.todo-list');
+const filterUL = document.querySelector('.filters');
+const all = filterUL.children[0].children[0];
+const active = filterUL.children[1].children[0];
+const completed = filterUL.children[2].children[0];
+const listCount = document.getElementsByClassName("todo-count")[0].childNodes[1];
+
+all.addEventListener("click", onFilterAll);
+
+function onFilterAll() {
+    active.classList.remove("selected");
+    completed.classList.remove("selected");
+    this.classList.add("selected");
+
+    let index = 0;
+    const todoListLI = todoList.getElementsByTagName("li");
+    for (index; index < todoListLI.length; index++) {
+        todoListLI[index].style.display = "block"
+    }
+    setCount(index);
+}
+
+active.addEventListener("click", onFilterActive);
+
+function onFilterActive() {
+    all.classList.remove("selected");
+    completed.classList.remove("selected");
+    this.classList.add("selected");
+    const todoListLI = todoList.getElementsByTagName("li");
+    let index = 0;
+    for (let i = 0; i < todoListLI.length; i++) {
+        if (todoListLI[i].className == "completed") {
+            todoListLI[i].style.display = "none"
+        } else {
+            todoListLI[i].style.display = "block"
+            index++;
+        }
+    }
+    setCount(index);
+}
+
+completed.addEventListener("click", onFilterCompleted);
+
+function onFilterCompleted() {
+    all.classList.remove("selected");
+    active.classList.remove("selected");
+    this.classList.add("selected");
+    const todoListLI = todoList.getElementsByTagName("li");
+
+    let index = 0;
+    for (let i = 0; i < todoListLI.length; i++) {
+        if (todoListLI[i].className == "completed") {
+            todoListLI[i].style.display = "block"
+            index++;
+        } else {
+            todoListLI[i].style.display = "none"
+        }
+    }
+    setCount(index);
+}
+
+function setCount(index) {
+    const listCount = document.getElementsByClassName("todo-count")[0].childNodes[1];
+    listCount.innerHTML = index;
+}
+
 const onUserCreateHandler = () => {
     const userName = prompt("추가하고 싶은 이름을 입력해주세요.");
     addUser(userName);
@@ -112,7 +177,7 @@ async function updateTodos(todos) {
              </li>`
         todoList.insertAdjacentHTML('beforeend', todoLI);
         if (todos[i].isCompleted) {
-            todoList.children[i].className ="completed";
+            todoList.children[i].className = "completed";
         }
     }
 }
