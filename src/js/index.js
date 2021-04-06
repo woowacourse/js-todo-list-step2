@@ -171,7 +171,7 @@ async function updateTodos(todos) {
                  <div class="view">
                     <input class="toggle" onclick= "onToggleTodo(this)" type="checkbox" />
                     <label class="label" ondblclick= "onEditItem">${todos[i].contents}</label>
-                    <button class="destroy" onclick= "onDeleteItem"></button>
+                    <button class="destroy" onclick= "onDeleteItem(this)"></button>
                  </div>
                  <input class="edit" value=${todos[i].contents} />
              </li>`
@@ -186,6 +186,17 @@ function onToggleTodo(toggle) {
     const selectedUserId = document.querySelector('.active').id
     fetch(url + `/api/users/${selectedUserId}/items/${toggle.parentNode.parentNode.id}/toggle`, {
         method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({})
+    }).then((response) => showSelectedUserTodo(document.querySelector('.active').id))
+}
+
+function onDeleteItem(button) {
+    const selectedUserId = document.querySelector('.active').id
+    fetch(url + `/api/users/${selectedUserId}/items/${button.parentNode.parentNode.id}`, {
+        method: "DELETE",
         headers: {
             "Content-Type": "application/json",
         },
