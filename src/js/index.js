@@ -98,20 +98,34 @@ function showSelectedUserTodo(userId) {
         .then((data) => updateTodos(data))
 }
 
-function updateTodos(todos) {
+async function updateTodos(todos) {
     todoList.innerHTML = '';
     for (let i = 0; i < todos.length; i++) {
         let todoLI =
-            ` <li id=${todos[i].id}>
+            ` <li id="${todos[i]._id}">
                  <div class="view">
-                    <input class="toggle" onclick= "onToggletodo" type="checkbox" />
+                    <input class="toggle" onclick= "onToggleTodo(this)" type="checkbox" />
                     <label class="label" ondblclick= "onEditItem">${todos[i].contents}</label>
                     <button class="destroy" onclick= "onDeleteItem"></button>
                  </div>
                  <input class="edit" value=${todos[i].contents} />
              </li>`
         todoList.insertAdjacentHTML('beforeend', todoLI);
+        if (todos[i].isCompleted) {
+            todoList.children[i].className ="completed";
+        }
     }
+}
+
+function onToggleTodo(toggle) {
+    const selectedUserId = document.querySelector('.active').id
+    fetch(url + `/api/users/${selectedUserId}/items/${toggle.parentNode.parentNode.id}/toggle`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({})
+    }).then((response) => showSelectedUserTodo(document.querySelector('.active').id))
 }
 
 const userCreateButton = document.querySelector('.user-create-button')
