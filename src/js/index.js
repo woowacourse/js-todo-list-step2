@@ -23,10 +23,27 @@ const onUserDeleteHandler = (e) => {
     if (wantDelete) deleteUser(selectedUser);
 }
 
+
 function deleteUser(selectedUser) {
     fetch(url + '/api/users/' + selectedUser.id, userDeleteOp)
         .then((response) => updateUserList())
         .catch((e) => console.log(e));
+}
+
+function onInputNewTodo(e) {
+    if (e.key == 'Enter') {
+        const selectUser = document.querySelector('.active').id;
+        fetch(url + `/api/users/${selectUser}/items/`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                contents: e.target.value
+            })
+        }).then((response) => showSelectedUserTodo(selectUser))
+            .then(e.target.value = "")
+    }
 }
 
 async function addUser(userName) {
@@ -99,9 +116,10 @@ function updateTodos(todos) {
 
 const userCreateButton = document.querySelector('.user-create-button')
 const userDeleteButton = document.querySelector('.user-delete-button')
+const newTodo = document.querySelector('.new-todo');
 userCreateButton.addEventListener('click', onUserCreateHandler)
 userDeleteButton.addEventListener('click', onUserDeleteHandler)
-
+newTodo.addEventListener('keydown', onInputNewTodo);
 
 const userDeleteOp = {
     method: "DELETE"
