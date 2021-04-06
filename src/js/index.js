@@ -63,7 +63,6 @@ function onFilterCompleted() {
 }
 
 function setCount(index) {
-    const listCount = document.getElementsByClassName("todo-count")[0].childNodes[1];
     listCount.innerHTML = index;
 }
 
@@ -161,25 +160,61 @@ function showSelectedUserTodo(userId) {
     fetch(url + `/api/users/${userId}/items/`)
         .then((response) => response.json())
         .then((data) => updateTodos(data))
+        .then((index) => setCount(index))
 }
 
 async function updateTodos(todos) {
     todoList.innerHTML = '';
-    for (let i = 0; i < todos.length; i++) {
+    let index = 0;
+    for (index; index < todos.length; index++) {
         let todoLI =
-            ` <li id="${todos[i]._id}">
-                 <div class="view">
-                    <input class="toggle" onclick= "onToggleTodo(this)" type="checkbox" />
-                    <label class="label" ondblclick= "onEditItem">${todos[i].contents}</label>
-                    <button class="destroy" onclick= "onDeleteItem(this)"></button>
-                 </div>
-                 <input class="edit" value=${todos[i].contents} />
-             </li>`
+            `<li id="${todos[index]._id}" onkeydown="onChangeMode(event)">
+<div class="view">
+<input class="toggle" onclick= "onToggleTodo(this)" type="checkbox" />
+<label class="label" ondblclick= "onEditItem(this)">${todos[index].contents}</label>
+<button class="destroy" onclick= "onDeleteItem(this)"></button>
+</div><input class="edit" value=${todos[index].contents} />
+</li>`
         todoList.insertAdjacentHTML('beforeend', todoLI);
-        if (todos[i].isCompleted) {
-            todoList.children[i].className = "completed";
+        if (todos[index].isCompleted) {
+            todoList.children[index].className = "completed";
         }
     }
+    return index;
+}
+
+
+function onChangeMode(e) {
+    let originalValue = (e.target.parentNode.getElementsByClassName("label")[0].innerText);
+    if (e.key === "Escape") {
+        let selectedLI = e.target.closest('li');
+        selectedLI.classList.remove('editing')
+        return;
+    }
+    if (e.key === "Enter") {
+        let selectedLI = e.target.closest('li');
+        let editedValue = selectedLI.getElementsByClassName("edit")[0].value;
+        selectedLI.getElementsByClassName("edit")[0].value = editedValue;
+        let input = e.target;
+        const itemId = input.previousSibling.parentNode.id;
+        const selectedUserId = document.querySelector('.active').id;
+        fetch(url + `/api/users/${selectedUserId}/items/${itemId}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                contents: editedValue
+            })
+        }).then((response) => showSelectedUserTodo(selectedUserId))
+            .then(() => selectedLI.classList.remove('editing'));
+    }
+}
+
+function onEditItem(editInput) {
+    const editInputParent = editInput.parentNode.parentNode;
+    editInputParent.addEventListener('keydown', onChangeMode)
+    editInputParent.classList.add('editing');
 }
 
 function onToggleTodo(toggle) {
