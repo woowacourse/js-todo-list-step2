@@ -7,8 +7,34 @@ const all = filterUL.children[0].children[0];
 const active = filterUL.children[1].children[0];
 const completed = filterUL.children[2].children[0];
 const listCount = document.getElementsByClassName("todo-count")[0].childNodes[1];
+const userCreateButton = document.querySelector('.user-create-button')
+const userDeleteButton = document.querySelector('.user-delete-button')
+const newTodo = document.querySelector('.new-todo');
 
+newTodo.addEventListener('keydown', onInputNewTodo);
 all.addEventListener("click", onFilterAll);
+active.addEventListener("click", onFilterActive);
+completed.addEventListener("click", onFilterCompleted);
+
+function onInputNewTodo(e) {
+    if (e.key == 'Enter') {
+        const selectUser = document.querySelector('.active').id;
+        if(e.target.value.length < 2) {
+            alert("TodoItem Contents는 최소 2글자 이상이어야 합니다.");
+            return ;
+        }
+        fetch(url + `/api/users/${selectUser}/items/`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                contents: e.target.value
+            })
+        }).then((response) => showSelectedUserTodo(selectUser))
+            .then(e.target.value = "")
+    }
+}
 
 function onFilterAll() {
     active.classList.remove("selected");
@@ -23,7 +49,6 @@ function onFilterAll() {
     setCount(index);
 }
 
-active.addEventListener("click", onFilterActive);
 
 function onFilterActive() {
     all.classList.remove("selected");
@@ -42,7 +67,6 @@ function onFilterActive() {
     setCount(index);
 }
 
-completed.addEventListener("click", onFilterCompleted);
 
 function onFilterCompleted() {
     all.classList.remove("selected");
@@ -68,7 +92,11 @@ function setCount(index) {
 
 const onUserCreateHandler = () => {
     const userName = prompt("추가하고 싶은 이름을 입력해주세요.");
-    addUser(userName);
+    if (userName.length < 2) {
+        alert("User의 이름은 최소 2글자 이상이어야 합니다.");
+    } else {
+        addUser(userName);
+    }
 }
 
 async function setUpUserList() {
@@ -92,22 +120,6 @@ function deleteUser(selectedUser) {
     fetch(url + '/api/users/' + selectedUser.id, userDeleteOp)
         .then((response) => updateUserList())
         .catch((e) => console.log(e));
-}
-
-function onInputNewTodo(e) {
-    if (e.key == 'Enter') {
-        const selectUser = document.querySelector('.active').id;
-        fetch(url + `/api/users/${selectUser}/items/`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                contents: e.target.value
-            })
-        }).then((response) => showSelectedUserTodo(selectUser))
-            .then(e.target.value = "")
-    }
 }
 
 async function addUser(userName) {
@@ -194,6 +206,10 @@ function onChangeMode(e) {
     if (e.key === "Enter") {
         let selectedLI = e.target.closest('li');
         let editedValue = selectedLI.getElementsByClassName("edit")[0].value;
+        if(editedValue.length < 2) {
+            alert("TodoItem Contents는 최소 2글자 이상이어야 합니다.");
+            return ;
+        }
         selectedLI.getElementsByClassName("edit")[0].value = editedValue;
         let input = e.target;
         const itemId = input.previousSibling.parentNode.id;
@@ -239,12 +255,8 @@ function onDeleteItem(button) {
     }).then((response) => showSelectedUserTodo(document.querySelector('.active').id))
 }
 
-const userCreateButton = document.querySelector('.user-create-button')
-const userDeleteButton = document.querySelector('.user-delete-button')
-const newTodo = document.querySelector('.new-todo');
 userCreateButton.addEventListener('click', onUserCreateHandler)
 userDeleteButton.addEventListener('click', onUserDeleteHandler)
-newTodo.addEventListener('keydown', onInputNewTodo);
 
 const userDeleteOp = {
     method: "DELETE"
