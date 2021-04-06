@@ -5,16 +5,20 @@ const onUserCreateHandler = () => {
     addUser(userName);
 }
 
+const onUserDeleteHandler = (e) => {
+    const selectedUser = document.querySelector('.active')
+    const wantDelete = alert(selectedUser.innerText + "을 삭제하시겠습니까?");
+    if (wantDelete) deleteUser(e.target.id);
+}
+
+function deleteUser(userId) {
+    fetch(url + '/api/users/' + userId, userDeleteOp)
+        .then((response) => console.log(response));
+}
+
 function addUser(userName) {
-    fetch(url + '/api/users', {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-            name: userName
-        }),
-    }).then((response) => updateUserList());
+    fetch(url + '/api/users', userPostOp)
+        .then((response) => updateUserList());
 }
 
 
@@ -36,7 +40,26 @@ function addUserList(userListData) {
 }
 
 function selectUser(userButton) {
+    fetch(url + "/api/users" + userButton.id)
+        .then()
 }
 
 const userCreateButton = document.querySelector('.user-create-button')
+const userDeleteButton = document.querySelector('.user-delete-button')
 userCreateButton.addEventListener('click', onUserCreateHandler)
+userDeleteButton.addEventListener('click', onUserDeleteHandler)
+
+
+const userDeleteOp = {
+    method: "DELETE"
+}
+
+const userPostOp = {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+        name: userName
+    })
+}
