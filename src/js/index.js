@@ -1,13 +1,16 @@
-const API_URL = 'https://js-todo-list-9ca3a.df.r.appspot.com/api/';
+const API_URL = 'https://js-todo-list-9ca3a.df.r.appspot.com/api/users';
 const USER_LIST = document.querySelector('#user-list');
 const TODO_LIST = document.querySelector('.todo-list');
 
 window.onload = () => {
   const userCreateButton = document.querySelector('.user-create-button')
   userCreateButton.addEventListener('click', onUserCreateHandler)
+
+  const userDeleteButton = document.querySelector('.user-delete-button')
+  userDeleteButton.addEventListener('click', onUserDeleteHandler);
+
   callGetUsersAPI();
 }
-
 
 const onUserCreateHandler = () => {
   const userName = prompt('추가하고 싶은 이름을 입력해주세요.');
@@ -16,6 +19,26 @@ const onUserCreateHandler = () => {
     return;
   }
   callAddUserAPI(userName);
+}
+
+const onUserDeleteHandler = () => {
+  const user = getActiveUser();
+  if (user === undefined) {
+    alert('선택된 유저가 없습니다.');
+    return;
+  }
+  const isDelete = confirm(user.getAttribute('data-name') + ' 을(를) 삭제하시겠습니까?');
+  if (isDelete === true) {
+    callDeleteUserAPI(user);
+  }
+}
+
+function getActiveUser() {
+  for (const user of USER_LIST.children) {
+    if (user.getAttribute('data-active') == 'true') {
+      return user;
+    }
+  }
 }
 
 function getOption(methodType, bodyData) {
@@ -29,7 +52,7 @@ function getOption(methodType, bodyData) {
 }
 
 function callGetUsersAPI() {
-  fetch(API_URL+'users')
+  fetch(API_URL)
   .then((response) => {
     if (!response.ok) {
       throw new Error('유저 정보 얻기 실패');
@@ -51,7 +74,7 @@ function addUsers(response) {
 function addUser(user) {
   const userListItem = document.createElement('user-list-item');
     userListItem.setAttribute('key', user['_id']);
-    userListItem.setAttribute('data-_id', user['id']);
+    userListItem.setAttribute('data-_id', user['_id']);
     userListItem.setAttribute('data-name', user['name']);
     userListItem.setAttribute('data-todolist', user['todoList']);
     userListItem.setAttribute('data-active', false);
@@ -91,7 +114,7 @@ function clearTodoList() {
 
 function callGetUserAPI(event) {
   const userId = event.target.getAttribute('data-id');
-  fetch(API_URL+'users/'+userId)
+  fetch(API_URL+'/'+userId)
   .then((response) => {
     if (!response.ok) {
       throw new Error('유저 정보 얻기 실패');
@@ -105,7 +128,6 @@ function callGetUserAPI(event) {
 }
 
 function addTodoList(response) {
-  console.log(response);
   for (const todo of response['todoList']) {
     
     const todoListItem = document.createElement('todo-list-item');
@@ -183,15 +205,35 @@ function callAddUserAPI(userName) {
     'name': userName,
   }
   const option = getOption('POST', requestBody);
-  fetch(API_URL+'users', option)
+  fetch(API_URL, option)
   .then((response) => {
     if (!response.ok) {
       throw new Error('유저 추가 실패');
     }
     return response.json();
   })
-  .then(addUser)
+  .then((response) => {
+    window.location.reload();
+  })
   .catch((error => {
     console.log(error)
   }))
+}
+
+function callDeleteUserAPI(user) {
+  const userId = user.getAttribute('data-_id');
+  const option = getOption('DELETE');
+  fetch(API_URL + '/' + userId, option)
+  .then((response) => {
+    if (!response.ok) {
+      throw new Error("유저 삭제에 실패했습니다.");
+    }
+    return response.json();
+  })
+  .then((response) => {
+    window.location.reload();
+  })
+  .catch((error) => {
+    console.log(error);
+  });
 }
