@@ -31,6 +31,22 @@ export const onLoadUserItemsHandler = async (event) => {
     }
 }
 
+export const loadNewTodoItems = async (dataId) => {
+    const response = await fetch(uri.userTodoItems(dataId), form.get());
+    const todoItems = await response.json();
+
+    const $todoList = document.querySelector(".todo-list");
+    $todoList.innerHTML = '';
+    for (const todoItem of todoItems) {
+        const $todoItem = createElementByString(
+            templateTodoItem(todoItem._id, todoItem.contents)
+        );
+        applyCompleted(todoItem, $todoItem);
+        applyPriority(todoItem, $todoItem);
+        $todoList.appendChild($todoItem);
+    }
+}
+
 function applyCompleted(todoItem, $todoItem) {
     if (todoItem.isCompleted) {
         $todoItem.querySelector("li").classList.add("completed");

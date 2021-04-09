@@ -18,3 +18,15 @@ export const postCreateUser = (name) => {
         })
     };
 }
+
+export const postNewTodo = (contents) => {
+    return {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            "contents": contents
+        })
+    };
+}
