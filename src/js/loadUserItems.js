@@ -1,7 +1,7 @@
 import * as form from "./requestForm.js";
 import * as uri from "./requestUri.js";
 import {templateTodoItem, templateChipFirst, templateChipSecond} from "./template.js";
-import {createElementByString} from "./index.js";
+import {activeUser, createElementByString} from "./index.js";
 
 function notCreateDeleteButton(button) {
     return !(button.classList.contains("user-create-button") ||
@@ -26,6 +26,8 @@ export const onLoadUserItemsHandler = async (event) => {
             applyPriority(todoItem, $todoItem);
             $todoList.appendChild($todoItem);
         }
+
+        activeUser(buttonId);
     }
 }
 
