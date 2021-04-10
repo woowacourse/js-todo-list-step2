@@ -9,6 +9,9 @@ window.onload = () => {
   const userDeleteButton = document.querySelector('.user-delete-button')
   userDeleteButton.addEventListener('click', onUserDeleteHandler);
 
+  const todoInput = document.querySelector('.new-todo');
+  todoInput.addEventListener('keyup', inputTodoItemEvent);
+
   callGetUsersAPI();
 }
 
@@ -96,6 +99,7 @@ function userListItemButtonEvent(event) {
   clearTodoList();
   event.target.parentNode.setAttribute('data-active', true);
   event.target.classList.add("active");
+  changeTitle(event);
   callGetUserAPI(event);
 }
 
@@ -110,6 +114,11 @@ function clearTodoList() {
   while (TODO_LIST.children.length !== 0) {
     TODO_LIST.removeChild(TODO_LIST.firstChild);
   }
+}
+
+function changeTitle(event) {
+  const title = document.querySelector('#user-title > span > strong');
+  title.textContent = event.target.textContent;
 }
 
 function callGetUserAPI(event) {
@@ -129,8 +138,12 @@ function callGetUserAPI(event) {
 
 function addTodoList(response) {
   for (const todo of response['todoList']) {
-    
-    const todoListItem = document.createElement('todo-list-item');
+    addTodoItem(todo);
+  }
+}
+
+function addTodoItem(todo) {
+  const todoListItem = document.createElement('todo-list-item');
     todoListItem.setAttribute('key', todo['_id']);
     todoListItem.setAttribute('data-_id', todo['_id']);
     todoListItem.setAttribute('data-contents', todo['contents']);
@@ -148,6 +161,12 @@ function addTodoList(response) {
     todoListItemInput.type = 'checkbox';
     todoListItemInput.setAttribute('data-action', 'toggleTodo');
     todoListItemInput.setAttribute('toggletodo', 'click');
+    if (todo['isCompleted'] === true) {
+      todoListItemInput.toggleAttribute('checked');
+      todoListItemList.className = 'completed';
+      todoListItemInput.checked = true;
+    }
+    todoListItemInput.addEventListener('click', toggleTodoItemEvent);
 
     const label = document.createElement('label');
     label.className = 'label';
@@ -197,7 +216,6 @@ function addTodoList(response) {
     todoListItemList.appendChild(todoListItemDiv);
     todoListItem.appendChild(todoListItemList);
     TODO_LIST.appendChild(todoListItem);
-  }
 }
 
 function callAddUserAPI(userName) {
@@ -230,8 +248,72 @@ function callDeleteUserAPI(user) {
     }
     return response.json();
   })
-  .then((response) => {
+  .then(() => {
     window.location.reload();
+  })
+  .catch((error) => {
+    console.log(error);
+  });
+}
+
+function inputTodoItemEvent(event) {
+  if (event.key === 'Enter') {
+    const value = event.target.value;
+    const user = getActiveUser();
+    if (user === undefined) {
+      alert('유저가 선택되지 않았습니다.');
+      return;
+    }
+    const userId = user.getAttribute('key');
+    if (callAddTodoItemAPI(value, userId)) {
+      event.target.value = '';
+    } 
+  }
+}
+
+function callAddTodoItemAPI(value, userId) {
+  const requestBody = {
+    'contents': value,
+  }
+  const option = getOption('POST', requestBody);
+  fetch(API_URL + '/' + userId + '/items', option)
+  .then((response) => {
+    if (!response.ok) {
+      throw new Error('투두 추가 실패');
+    }
+    return response.json();
+  })
+  .then(addTodoItem)
+  .catch((error) => {
+    console.log(error);
+    return false;
+  });
+  return true;
+}
+
+function toggleTodoItemEvent(event) {
+  const dataId = event.target.parentNode.parentNode.getAttribute('data-id');
+  const user = getActiveUser();
+  if (user === undefined) {
+    alert('유저가 선택되지 않았습니다.');
+    return;
+  }
+  const userId = user.getAttribute('key');
+  const option = getOption('PUT');
+  fetch(API_URL + '/' +  userId + '/items/' + dataId + '/toggle', option)
+  .then((response) => {
+    if (!response.ok) {
+      throw new Error('todoItem 토글 실패');
+    }
+    return response.json();
+  })
+  .then((response) => {
+    event.target.toggleAttribute('checked');
+    if (response['isCompleted']) {
+      event.target.parentNode.parentNode.classList.add('completed');
+    } else {
+      event.target.parentNode.parentNode.classList.remove('completed');
+    }
   })
   .catch((error) => {
     console.log(error);
