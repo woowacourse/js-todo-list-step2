@@ -3,6 +3,10 @@ const BASE_URL = "https://js-todo-list-9ca3a.df.r.appspot.com";
 export const users = BASE_URL + "/api/users/";
 const items = "/items/";
 
+export const user = (userId) => {
+    return users + userId;
+};
+
 export const allTodoItems = (userId) => {
     return users + userId + items;
 }

@@ -30,3 +30,8 @@ export const onDestroyAllItemsHandler = async (event) => {
 
     await loadNewTodoItems(activeUserId);
 }
+
+export const destroyAllItems = async (userId) => {
+    const response = await fetch(uri.allTodoItems(userId), form.deleteForm());
+    const destroyAllTodoItems = await response.json();
+}
