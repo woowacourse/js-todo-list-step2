@@ -173,6 +173,7 @@ function addTodoItem(todo) {
     label.setAttribute('data-action', 'toggleEditingTodo');
     label.setAttribute('toggleeditingtodo', 'dbclick');
     label.textContent = todo['contents'];
+    label.addEventListener('dblclick', todoLabelEvent);
 
     if (todo['priority'] === 'NONE') {
       const todoListItemSelect = document.createElement('select');
@@ -217,9 +218,15 @@ function addTodoItem(todo) {
     destroyButton.setAttribute('deletetodo', 'click');
     destroyButton.addEventListener('click', deleteTodoButtonEvent);
 
+    const hideInput = document.createElement("input");
+    hideInput.className = "edit";
+    hideInput.setAttribute('value', todo['contents']);
+    hideInput.addEventListener("keyup", hideInputEvent);
+
     todoListItemDiv.appendChild(todoListItemInput);
     todoListItemDiv.appendChild(label);
     todoListItemDiv.appendChild(destroyButton);
+    todoListItemList.appendChild(hideInput);
     todoListItemList.appendChild(todoListItemDiv);
     todoListItem.appendChild(todoListItemList);
     TODO_LIST.appendChild(todoListItem);
@@ -237,7 +244,7 @@ function callAddUserAPI(userName) {
     }
     return response.json();
   })
-  .then((response) => {
+  .then(() => {
     window.location.reload();
   })
   .catch((error => {
@@ -348,7 +355,57 @@ function deleteTodoButtonEvent(event) {
     }
     return response.json();
   })
+  .then(() => {
+    user.firstChild.click();
+  })
+  .catch((error) => {
+    console.log(error);
+  });
+}
+
+function todoLabelEvent(event) {
+  event.target.parentNode.parentNode.className = 'editing';
+}
+
+function hideInputEvent(event) {
+  if (event.key === 'Enter') {
+    if (event.target.value.trim().length < 2) {
+      alert('2글자 이상만 가능합니다.');
+      return;
+    }
+    if (event.target.value === event.target.getAttribute('value')) {
+      event.target.parentNode.className = '';
+      return;
+    }
+    callTodoContentsUpdateAPI(event);
+  } else if (event.key === 'Escape') {
+    event.target.value = event.target.getAttribute('value');
+    event.target.parentNode.className = '';
+  }
+}
+
+function callTodoContentsUpdateAPI(event) {
+  const user = getActiveUser();
+  if (user === undefined) {
+    alert('유저가 선택되지 않았습니다.');
+    return;
+  }
+
+  const requestBody = {
+    'contents': event.target.value
+  }
+  const option = getOption('PUT', requestBody);
+  const userId = user.getAttribute('key');
+  const dataId = event.target.parentNode.getAttribute('data-id');
+
+  fetch(API_URL + '/' +  userId + '/items/' + dataId, option)
   .then((response) => {
+    if (!response.ok) {
+      throw new Error('투두 수정 실패');
+    }
+    return response.json();
+  })
+  .then(() => {
     user.firstChild.click();
   })
   .catch((error) => {
