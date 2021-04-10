@@ -31,7 +31,7 @@ export const postNewTodo = (contents) => {
     };
 }
 
-export const deleteTodoItem = () => {
+export const deleteDestroyTodoItem = () => {
     return {
         method: 'DELETE',
         headers: {
