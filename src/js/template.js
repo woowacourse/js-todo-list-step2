@@ -13,7 +13,7 @@ export const templateTodoItem = (_id, contents) => {
         + '</select>' + contents + '</label>'
         + '<button class="destroy" data-action="deleteTodo" deletetodo="click"></button>'
         + '</div>'
-        + '<input class="edit" value="${contents}">'
+        + '<input class="edit" value="' + contents + '">'
         + '</li>';
 }
 
