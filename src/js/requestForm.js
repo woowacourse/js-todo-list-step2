@@ -39,3 +39,15 @@ export const deleteDestroyTodoItem = () => {
         }
     };
 }
+
+export const putEditTodoItem = (contents) => {
+    return {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            "contents": contents
+        })
+    };
+}
