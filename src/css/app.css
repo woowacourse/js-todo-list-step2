@@ -487,3 +487,7 @@ button.user-delete-button.ripple {
   padding-right: 10px;
   margin-left: -5px;
 }
+
+user-list-item {
+  padding-right: 5px;
+}
