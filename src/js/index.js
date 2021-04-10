@@ -3,7 +3,11 @@ import * as uri from "./requestUri.js";
 import {templateUser} from "./template.js";
 import {onUserCreateHandler} from "./createUser.js";
 import {onUserDeleteHandler} from "./deleteUser.js";
-import {onLoadUserItemsHandler} from "./loadUserItems.js";
+import {
+    onActiveFilterHandler,
+    onAllFilterHandler, onCompletedFilterHandler,
+    onLoadUserItemsHandler
+} from "./loadUserItems.js";
 import {onNewTodoHandler} from "./addUserItem.js";
 import {
     onDestroyAllItemsHandler,
@@ -30,6 +34,18 @@ $todoList.addEventListener('click', onDestroyItemHandler);
 $todoList.addEventListener('click', onToggleItemHandler);
 $todoList.addEventListener('dblclick', onEditItemHandler);
 $todoList.addEventListener('change', onPriorityItemHandler);
+
+
+const $filters = document.querySelector('.filters');
+
+export const $allFilter = $filters.querySelector('.all');
+$allFilter.addEventListener('click', onAllFilterHandler);
+
+export const $activeFilter = $filters.querySelector('.active');
+$activeFilter.addEventListener('click', onActiveFilterHandler);
+
+export const $completedFilter = $filters.querySelector('.completed');
+$completedFilter.addEventListener('click', onCompletedFilterHandler);
 
 const $clearCompletedButton = document.querySelector('.clear-completed');
 $clearCompletedButton.addEventListener('click', onDestroyAllItemsHandler);

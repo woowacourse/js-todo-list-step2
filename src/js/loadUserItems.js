@@ -1,11 +1,22 @@
 import * as form from "./requestForm.js";
 import * as uri from "./requestUri.js";
 import {templateTodoItem, templateChipFirst, templateChipSecond} from "./template.js";
-import {activeUser, createElementByString} from "./index.js";
+import {
+    $activeFilter,
+    $allFilter, $completedFilter,
+    activeUser,
+    createElementByString
+} from "./index.js";
 
-function notCreateDeleteButton(button) {
+const notCreateDeleteButton = (button) => {
     return !(button.classList.contains("user-create-button") ||
         button.classList.contains("user-delete-button"));
+}
+
+const updateTodoItemsCount = (count) => {
+    const $todoCount = document.querySelector(".todo-count");
+    const $strongTag = $todoCount.querySelector('strong');
+    $strongTag.innerText = count;
 }
 
 export const onLoadUserItemsHandler = async (event) => {
@@ -27,6 +38,7 @@ export const onLoadUserItemsHandler = async (event) => {
             $todoList.appendChild($todoItem);
         }
 
+        updateTodoItemsCount(todoItems.length);
         activeUser(buttonId);
     }
 }
@@ -45,6 +57,8 @@ export const loadNewTodoItems = async (dataId) => {
         applyPriority(todoItem, $todoItem);
         $todoList.appendChild($todoItem);
     }
+
+    updateTodoItemsCount(todoItems.length);
 }
 
 function applyCompleted(todoItem, $todoItem) {
@@ -64,4 +78,57 @@ function applyPriority(todoItem, $todoItem) {
         $todoItem.querySelector(".chip")
             .replaceWith(createElementByString(templateChipSecond));
     }
+}
+
+export const onAllFilterHandler = () => {
+    $allFilter.classList.add("selected");
+    $activeFilter.classList.remove("selected");
+    $completedFilter.classList.remove("selected");
+
+    const $todoList = document.querySelector(".todo-list");
+    for (const todoItem of $todoList.children) {
+        todoItem.style.display = "block";
+    }
+
+    updateTodoItemsCount($todoList.childElementCount);
+}
+
+export const onActiveFilterHandler = () => {
+    $allFilter.classList.remove("selected");
+    $activeFilter.classList.add("selected");
+    $completedFilter.classList.remove("selected");
+
+    let countOfActiveItem = 0;
+    const $todoList = document.querySelector(".todo-list");
+
+    for (const todoItem of $todoList.children) {
+        if (todoItem.classList.contains("completed")) {
+            todoItem.style.display = "none";
+        } else {
+            todoItem.style.display = "block";
+            countOfActiveItem += 1;
+        }
+    }
+
+    updateTodoItemsCount(countOfActiveItem);
+}
+
+export const onCompletedFilterHandler = () => {
+    $allFilter.classList.remove("selected");
+    $activeFilter.classList.remove("selected");
+    $completedFilter.classList.add("selected");
+
+    let countOfCompltedItem = 0;
+    const $todoList = document.querySelector(".todo-list");
+
+    for (const todoItem of $todoList.children) {
+        if (todoItem.classList.contains("completed")) {
+            todoItem.style.display = "block";
+            countOfCompltedItem += 1;
+        } else {
+            todoItem.style.display = "none";
+        }
+    }
+
+    updateTodoItemsCount(countOfCompltedItem);
 }
