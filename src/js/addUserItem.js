@@ -13,7 +13,7 @@ export const onNewTodoHandler = async (event) => {
 
         const $activeUser = $userList.querySelector(".active");
         const activeUserId = $activeUser.getAttribute("data-id");
-        const response = await fetch(uri.userTodoItems(activeUserId), form.postNewTodo($newTodoInput.value));
+        const response = await fetch(uri.allTodoItems(activeUserId), form.postNewTodo($newTodoInput.value));
         const newTodoItem = await response.json();
 
         $newTodoInput.value = '';

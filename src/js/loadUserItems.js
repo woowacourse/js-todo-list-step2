@@ -13,7 +13,7 @@ export const onLoadUserItemsHandler = async (event) => {
 
     if (button && notCreateDeleteButton(button)) {
         const buttonId = button.getAttribute("data-id");
-        const response = await fetch(uri.userTodoItems(buttonId), form.get());
+        const response = await fetch(uri.allTodoItems(buttonId), form.get());
         const todoItems = await response.json();
 
         const $todoList = document.querySelector(".todo-list");
@@ -32,7 +32,7 @@ export const onLoadUserItemsHandler = async (event) => {
 }
 
 export const loadNewTodoItems = async (dataId) => {
-    const response = await fetch(uri.userTodoItems(dataId), form.get());
+    const response = await fetch(uri.allTodoItems(dataId), form.get());
     const todoItems = await response.json();
 
     const $todoList = document.querySelector(".todo-list");

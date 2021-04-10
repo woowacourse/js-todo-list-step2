@@ -12,7 +12,7 @@ export const onDestroyItemHandler = async (event) => {
         const $li = $destroyButton.closest("li");
         const itemId = $li.getAttribute("data-id");
 
-        const response = await fetch(uri.deleteTodoItem(activeUserId, itemId),
+        const response = await fetch(uri.todoItem(activeUserId, itemId),
             form.deleteDestroyTodoItem());
         const destroyTodoItem = await response.json();
 
@@ -24,7 +24,7 @@ export const onDestroyAllItemsHandler = async (event) => {
     const $activeUser = $userList.querySelector(".active");
     const activeUserId = $activeUser.getAttribute("data-id");
 
-    const response = await fetch(uri.deleteAllTodoItems(activeUserId),
+    const response = await fetch(uri.allTodoItems(activeUserId),
         form.deleteDestroyTodoItem());
     const destroyAllTodoItems = await response.json();
 
