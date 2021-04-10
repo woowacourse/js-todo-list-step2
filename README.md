@@ -32,7 +32,7 @@
 - [ ] 3. User 삭제하기
 - [x] 3. todoItem 추가하기
 - [x] 4. todoItem 불러오기
-- [ ] 5. todoItem complete하기
+- [x] 5. todoItem complete하기
 - [x] 6. todoItem 삭제하기
 - [x] 7. todoItem contents 내용 수정하기
 
@@ -48,8 +48,8 @@
 
 ## 🕵️‍♂️ 제약사항
 
-- [ ] 1. User의 이름은 최소 2글자 이상이어야 한다.
-- [ ] 2. TodoItem Contents는 최소 2글자 이상이어야 한다.
+- [x] 1. User의 이름은 최소 2글자 이상이어야 한다.
+- [x] 2. TodoItem Contents는 최소 2글자 이상이어야 한다.
 
 <br/>
 

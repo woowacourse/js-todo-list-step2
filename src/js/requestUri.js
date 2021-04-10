@@ -10,3 +10,7 @@ export const allTodoItems = (userId) => {
 export const todoItem = (userId, itemId) => {
     return users + userId + items + itemId;
 }
+
+export const toggleTodoItem = (userId, itemId) => {
+    return users + userId + items + itemId + "/toggle/";
+}

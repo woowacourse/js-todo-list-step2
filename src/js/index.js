@@ -8,6 +8,7 @@ import {onUserCreateHandler} from "./createUser.js";
 import {onNewTodoHandler} from "./addUserItem.js";
 import {onDestroyAllItemsHandler, onDestroyItemHandler} from "./destroyUserItem.js";
 import {onEditItemHandler} from "./editUserItem.js";
+import {onToggleItemHandler} from "./toggleUserItem.js";
 
 export const $userList = document.querySelector("#user-list");
 $userList.addEventListener('click', onLoadUserItemsHandler);
@@ -20,6 +21,7 @@ $newTodoInput.addEventListener('keyup', onNewTodoHandler);
 
 const $todoList = document.querySelector('.todo-list');
 $todoList.addEventListener('click', onDestroyItemHandler);
+$todoList.addEventListener('click', onToggleItemHandler);
 $todoList.addEventListener('dblclick', onEditItemHandler)
 
 const $clearCompletedButton = document.querySelector('.clear-completed');

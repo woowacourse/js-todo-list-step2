@@ -51,3 +51,12 @@ export const putEditTodoItem = (contents) => {
         })
     };
 }
+
+export const putToggleTodoItem = () => {
+    return {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+}
