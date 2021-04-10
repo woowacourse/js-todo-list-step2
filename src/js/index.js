@@ -54,8 +54,12 @@ export const createElementByString = (string) => {
 }
 
 export const activeUser = (dataId) => {
+    const $userTitle = document.querySelector("#user-title");
+    const $strongTag = $userTitle.querySelector("strong");
+
     for (const $child of $userList.children) {
         if ($child.getAttribute("data-id") === dataId) {
+            $strongTag.innerText = $child.innerText;
             $child.classList.add("active");
         } else {
             $child.classList.remove("active");
