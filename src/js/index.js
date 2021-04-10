@@ -180,6 +180,7 @@ function addTodoItem(todo) {
       todoListItemSelect.className = 'chip select';
       todoListItemSelect.setAttribute('data-action', 'selectPriority');
       todoListItemSelect.setAttribute('selectpriority', 'change');
+      todoListItemSelect.addEventListener('change', todoListItemSelectEvent);
 
       const noneOption = document.createElement('option');
       noneOption.value = 'NONE';
@@ -402,6 +403,34 @@ function callTodoContentsUpdateAPI(event) {
   .then((response) => {
     if (!response.ok) {
       throw new Error('투두 수정 실패');
+    }
+    return response.json();
+  })
+  .then(() => {
+    user.firstChild.click();
+  })
+  .catch((error) => {
+    console.log(error);
+  });
+}
+
+function todoListItemSelectEvent(event) {
+  const user = getActiveUser();
+  if (user === undefined) {
+    alert('유저가 선택되지 않았습니다.');
+    return;
+  }
+
+  const requestBody = {
+    'priority': event.target.options[event.target.selectedIndex].value
+  }
+  const option = getOption('PUT', requestBody);
+  const userId = user.getAttribute('key');
+  const dataId = event.target.parentNode.parentNode.parentNode.getAttribute('data-id');
+  fetch(API_URL + '/' +  userId + '/items/' + dataId + '/priority', option)
+  .then((response) => {
+    if (!response.ok) {
+      throw new Error('투두 우선순위 수정 실패');
     }
     return response.json();
   })
