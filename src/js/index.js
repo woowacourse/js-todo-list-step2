@@ -6,6 +6,7 @@ import {templateUser} from "./template.js";
 import {onLoadUserItemsHandler} from "./loadUserItems.js";
 import {onUserCreateHandler} from "./createUser.js";
 import {onNewTodoHandler} from "./addUserItem.js";
+import {onDestroyItemHandler} from "./destroyUserItem.js";
 
 export const $userList = document.querySelector("#user-list");
 $userList.addEventListener('click', onLoadUserItemsHandler);
@@ -15,6 +16,9 @@ $userCreateButton.addEventListener('click', onUserCreateHandler);
 
 export const $newTodoInput = document.querySelector('.new-todo');
 $newTodoInput.addEventListener('keyup', onNewTodoHandler);
+
+const $todoList = document.querySelector('.todo-list');
+$todoList.addEventListener('click', onDestroyItemHandler);
 
 async function onLoadUsers() {
     const responseUsers = await fetch(uri.users, form.get());

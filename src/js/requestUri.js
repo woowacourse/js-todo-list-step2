@@ -5,3 +5,7 @@ export const users = BASE_URL + "/api/users/";
 export const userTodoItems = (id) => {
     return users + id + "/items";
 }
+
+export const deleteTodoItem = (userId, itemId) => {
+    return users + userId + "/items/" + itemId;
+}

@@ -30,3 +30,12 @@ export const postNewTodo = (contents) => {
         })
     };
 }
+
+export const deleteTodoItem = () => {
+    return {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+}
