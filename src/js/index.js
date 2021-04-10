@@ -38,7 +38,7 @@ const onUserDeleteHandler = () => {
 
 function getActiveUser() {
   for (const user of USER_LIST.children) {
-    if (user.getAttribute('data-active') == 'true') {
+    if (user.getAttribute('data-active') === 'true') {
       return user;
     }
   }
@@ -211,8 +211,15 @@ function addTodoItem(todo) {
       label.prepend(todoListItemSpan);
     }
 
+    const destroyButton = document.createElement('button');
+    destroyButton.className = 'destroy';
+    destroyButton.setAttribute('data-action', 'deleteTodo');
+    destroyButton.setAttribute('deletetodo', 'click');
+    destroyButton.addEventListener('click', deleteTodoButtonEvent);
+
     todoListItemDiv.appendChild(todoListItemInput);
     todoListItemDiv.appendChild(label);
+    todoListItemDiv.appendChild(destroyButton);
     todoListItemList.appendChild(todoListItemDiv);
     todoListItem.appendChild(todoListItemList);
     TODO_LIST.appendChild(todoListItem);
@@ -258,6 +265,10 @@ function callDeleteUserAPI(user) {
 
 function inputTodoItemEvent(event) {
   if (event.key === 'Enter') {
+    if(event.target.value.trim().length < 2) {
+      alert('2글자 이상 입력해야 합니다.');
+      return
+    }
     const value = event.target.value;
     const user = getActiveUser();
     if (user === undefined) {
@@ -314,6 +325,31 @@ function toggleTodoItemEvent(event) {
     } else {
       event.target.parentNode.parentNode.classList.remove('completed');
     }
+  })
+  .catch((error) => {
+    console.log(error);
+  });
+}
+
+function deleteTodoButtonEvent(event) {
+  const dataId = event.target.parentNode.parentNode.getAttribute('data-id');
+  const user = getActiveUser();
+  if (user === undefined) {
+    alert('유저가 선택되지 않았습니다.');
+    return;
+  }
+  const userId = user.getAttribute('key');
+  const option = getOption('DELETE');
+
+  fetch(API_URL + '/' +  userId + '/items/' + dataId, option)
+  .then((response) => {
+    if (!response.ok) {
+      throw new Error('todoItem 삭제 실패');
+    }
+    return response.json();
+  })
+  .then((response) => {
+    user.firstChild.click();
   })
   .catch((error) => {
     console.log(error);
