@@ -31,7 +31,7 @@ export const postNewTodo = (contents) => {
     };
 }
 
-export const deleteDestroyTodoItem = () => {
+export const deleteForm = () => {
     return {
         method: 'DELETE',
         headers: {
