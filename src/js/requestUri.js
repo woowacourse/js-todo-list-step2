@@ -14,3 +14,7 @@ export const todoItem = (userId, itemId) => {
 export const toggleTodoItem = (userId, itemId) => {
     return users + userId + items + itemId + "/toggle/";
 }
+
+export const priorityTodoItem = (userId, itemId) => {
+    return users + userId + items + itemId + "/priority/";
+}

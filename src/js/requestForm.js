@@ -60,3 +60,15 @@ export const putToggleTodoItem = () => {
         }
     };
 }
+
+export const putPriorityTodoItem = (priority) => {
+    return {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            "priority": priority
+        })
+    };
+}
