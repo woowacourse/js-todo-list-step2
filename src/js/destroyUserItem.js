@@ -1,8 +1,7 @@
 import * as form from "./requestForm.js";
 import * as uri from "./requestUri.js";
-import {$newTodoInput, $userList} from "./index.js";
+import {$userList} from "./index.js";
 import {loadNewTodoItems} from "./loadUserItems.js";
-
 
 export const onDestroyItemHandler = async (event) => {
     if (event.target && event.target.className === "destroy") {
@@ -15,8 +14,19 @@ export const onDestroyItemHandler = async (event) => {
 
         const response = await fetch(uri.deleteTodoItem(activeUserId, itemId),
             form.deleteTodoItem());
-        const newTodoItem = await response.json();
+        const destroyTodoItem = await response.json();
 
         await loadNewTodoItems(activeUserId);
     }
+}
+
+export const onDestroyAllItemsHandler = async (event) => {
+    const $activeUser = $userList.querySelector(".active");
+    const activeUserId = $activeUser.getAttribute("data-id");
+
+    const response = await fetch(uri.deleteAllTodoItems(activeUserId),
+        form.deleteTodoItem());
+    const destroyAllTodoItems = await response.json();
+
+    await loadNewTodoItems(activeUserId);
 }
