@@ -5,7 +5,7 @@ const BASE_URL = "https://js-todo-list-9ca3a.df.r.appspot.com";
 const userCreateButton = document.querySelector('.user-create-button')
 userCreateButton.addEventListener('click', onUserCreateHandler)
 const userDeleteButton = document.querySelector('.user-delete-button')
-userDeleteButton.addEventListener('click', deleteUser)
+userDeleteButton.addEventListener('click', onUserDeleteHandler)
 const $userItem = document.querySelector(".user-list");
 $userItem.addEventListener('click', selectUser);
 
@@ -14,7 +14,7 @@ let userInfo = new Map();
 allUsers();
 
 function allUsers() {
-  fetch(BASE_URL + "/api/users", form.getRequestForm())
+  fetch(BASE_URL + "/api/users", form.getUserListForm())
       .then(res => res.json())
       .then(
           users => renderUsers(users)
@@ -52,24 +52,32 @@ async function createUser(userForm) {
   return response._id;
 }
 
-function deleteUser() {
+function onUserDeleteHandler() {
   const user = document.querySelector(".active");
   const ans = confirm(user.textContent + "을 삭제하시겠습니까?");
   if(ans) {
-    console.log(user.userName);
-//    user.remove();
+    deleteUser(user.textContent);
+    user.remove();
   }
 }
 
+async function deleteUser(userName) {
+  const id = userInfo.get(userName);
+  userInfo.delete(userName);
+  await fetch(BASE_URL + "/api/users/" + id, form.deleteUserForm())
+      .then(res => res.json());
+}
+
 function onAddUserItem(userName) {
-  return ` <button class="ripple"><span class="userName">${userName}</span></button> `;
+  return ` <button class="ripple">${userName}</button> `;
 }
 
 function selectUser(event) {
   if(event.target.classList.contains("management")) {
     return;
   }
-  active(event.target.closest("button"));
+  const userName = active(event.target.closest("button"));
+  userTodoList(userName);
 }
 
 function active(user) {
@@ -79,5 +87,17 @@ function active(user) {
   }
   if(user) {
     user.classList.add("active");
+    const userTitle =  document.getElementById("user-title-name");
+    userTitle.textContent = user.textContent;
   }
+
+  return user.textContent;
+}
+
+async function userTodoList(userName) {
+  const userId = userInfo.get(userName);
+  const res = await fetch(`${BASE_URL}/api/users/${userId}/items/`, form.getUserTodoListForm())
+      .then(res => res.json());
+
+  console.log(res.todoList);
 }
