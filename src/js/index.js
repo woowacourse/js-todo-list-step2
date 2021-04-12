@@ -10,14 +10,38 @@ const userCreateButton = document.querySelector('.user-create-button')
 userCreateButton.addEventListener('click', onUserCreateHandler)
 
 
+const onUserDeleteHandler = async () => {
+    const selectedUser = document.querySelector('#user-list').querySelector('.active')
+    console.log(selectedUser)
+    const userId = selectedUser.dataset.id
+    await fetch(BASIC_URL + USERS + userId, {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json",
+        },
+    })
+
+    loadUsers()
+}
+
+const userDeleteButton = document.querySelector('.user-delete-button')
+userDeleteButton.addEventListener('click', onUserDeleteHandler)
+
+
 loadUsers();
+
 async function loadUsers() {
     const usersRes = await fetch(BASIC_URL + USERS)
     const users = await usersRes.json();
     const user_list = document.getElementById('user-list')
-    user_list.innerHTML = '';
+
+    user_list.innerHTML = ''
     for (let i = 0; i < users.length; i++) {
-        user_list.innerHTML += generateUserItem(users[i]);
+        if (i === 0) {
+            user_list.innerHTML += generateUserItem(users[i], true)
+            continue
+        }
+        user_list.innerHTML += generateUserItem(users[i], false)
     }
 }
 
@@ -51,7 +75,7 @@ async function selectUser(element) {
     const user = await userRes.json();
     const todoList = user.todoList
 
-    const view_todo_list = document.getElementsByClassName('todo-list')[0];
+    const view_todo_list = document.querySelector('.todo-list');
     view_todo_list.innerHTML = ''
     for (let i = 0; i < todoList.length; i++) {
         view_todo_list.innerHTML += generateTodoItem(todoList[i].contents)
@@ -59,7 +83,10 @@ async function selectUser(element) {
 }
 
 
-function generateUserItem(user) {
+function generateUserItem(user, isActive) {
+    if (isActive) {
+        return `<button class='ripple active' data-id=${user._id} onClick=selectUser(this)>${user.name}</button>`
+    }
     return `<button class=ripple data-id=${user._id} onClick=selectUser(this)>${user.name}</button>`
 }
 
