@@ -80,7 +80,7 @@ function makeTodo(content, id, liClass) {
   return `<li class=${liClass}>
               <div class="view" id=${id}>
                 <input class="toggle" onclick="onToggleTodoItem(event)" type="checkbox" ${val}/>
-                <label class="label">
+                <label class="label" ondblclick="onDoubleClickedItem(event)">
                   <select class="chip select">
                     <option value="0" selected>순위</option>
                     <option value="1">1순위</option>
@@ -129,19 +129,29 @@ async function onToggleTodoItem(event) {
 
 function onDoubleClickedItem(event) {
   let updatedLabel = event.target;
-
+  const itemId = updatedLabel.closest('div').id;
   const updatedLi = updatedLabel.closest('li');
   updatedLi.classList.add("editing");
 
   let input = updatedLi.querySelector(".edit");
-  input.addEventListener('keydown', function (innerEvent) {
+  input.addEventListener('keydown', async function (innerEvent) {
     if (innerEvent.key === 'Esc' || innerEvent.key === 'Escape') {
       updatedLi.classList.remove("editing");
     }
 
     if (innerEvent.key === 'Enter') {
-      event.target.textContent = input.value;
+      const result = await fetch(baseURL + '/api/users/' + userId + "/items/" + itemId, {
+        method: 'PUT',
+        body: JSON.stringify({
+          contents: input.value
+        }),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(res => res.json());
+
       updatedLi.classList.remove("editing");
+      await getSelectedUserTodo(userId);
     }
   });
 }
