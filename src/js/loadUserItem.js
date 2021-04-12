@@ -15,9 +15,15 @@ export default function loadUserItem(userList, baseUrl) {
             }
             activedUser.classList.remove('active');
             target.classList.add('active');
+
+            const userId = target.id;
+            this.renderUserTodo(userId);
+
+            this.userTitle.innerText = target.textContent;
         }
-        
-        const userId = target.id;
+    }
+
+    this.renderUserTodo = (userId) => {
         fetch(`${this.baseUrl}/api/users/${userId}/items`, {
             method: 'GET',
             headers: {'content-type': 'application/json'}
@@ -26,9 +32,6 @@ export default function loadUserItem(userList, baseUrl) {
         .then(result => {
             this.renderTodo(result);
         })
-        .catch(err => alert(err));
-
-        this.userTitle.innerText = target.textContent;
     }
 
     this.renderTodoTemplate = (item) => {

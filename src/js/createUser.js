@@ -1,5 +1,5 @@
-export default function createUser(userCreateButton, baseUrl, renderUser) {
-    this.userCreateButton = userCreateButton;
+export default function createUser(baseUrl, renderUser) {
+    this.userCreateButton = document.querySelector('.user-create-button');
     this.renderUser = renderUser;
     this.baseURL = baseUrl;
 
@@ -7,7 +7,7 @@ export default function createUser(userCreateButton, baseUrl, renderUser) {
         const userName = prompt("추가하고 싶은 이름을 입력해주세요.");
         if (userName.length < 2) {
             alert("User의 이름은 최소 2글자 이상이어야 한다.");
-            return inputUserName();
+            return this.inputUserName();
         }
         return userName;
     }
@@ -28,6 +28,6 @@ export default function createUser(userCreateButton, baseUrl, renderUser) {
         .catch(err => alert(err));
     }
 
-    userCreateButton.addEventListener('click', this.onUserCreateHandler);
+    this.userCreateButton.addEventListener('click', this.onUserCreateHandler);
 }
 
