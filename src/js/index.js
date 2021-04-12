@@ -5,17 +5,18 @@ const BASE_URL = "https://js-todo-list-9ca3a.df.r.appspot.com";
 const userCreateButton = document.querySelector('.user-create-button')
 const userDeleteButton = document.querySelector('.user-delete-button')
 const $userItem = document.querySelector(".user-list");
-const todoList = document.querySelector(".todo-list");
+const $todoList = document.querySelector(".todo-list");
 const todoInput = document.querySelector('.input-container')
 
 userCreateButton.addEventListener('click', onUserCreateHandler)
 userDeleteButton.addEventListener('click', onUserDeleteHandler)
 $userItem.addEventListener('click', selectUser);
 todoInput.addEventListener('keyup', onAddTodoItem);
-todoList.addEventListener('click', onCompleteTodoItem);
+$todoList.addEventListener('click', onCompleteTodoItem);
+$todoList.addEventListener('click', onDestroyItem);
+// todoList.addEventListener('dbclick', onChangeContents);
 
 let userInfo = new Map();
-let currentUserName;
 
 allUsers();
 
@@ -95,7 +96,6 @@ function active(user) {
         user.classList.add("active");
         const userTitle = document.getElementById("user-title-name");
         userTitle.textContent = user.textContent;
-        currentUserName = userTitle.textContent;
     }
 
     return user.textContent;
@@ -106,16 +106,16 @@ async function userTodoList(userName) {
     const userId = userInfo.get(userName);
     const todoListContents = await fetch(`${BASE_URL}/api/users/${userId}/items/`, form.getUserTodoListForm())
         .then(res => res.json());
-    todoList.insertAdjacentHTML("beforeend", silver)
+    $todoList.insertAdjacentHTML("beforeend", silver)
     for (let i = 0; i < todoListContents.length; i++) {
         const content = todoListContents[i];
-        todoList.insertAdjacentHTML("beforeend", todoItemForm(content));
+        $todoList.insertAdjacentHTML("beforeend", todoItemForm(content));
     }
 }
 
 function removeCurrentTodo() {
-    while(todoList.hasChildNodes()) {
-        todoList.removeChild(todoList.firstChild);
+    while($todoList.hasChildNodes()) {
+        $todoList.removeChild($todoList.firstChild);
     }
 }
 
@@ -176,13 +176,41 @@ function add(userName, contents) {
 }
 
 async function onCompleteTodoItem(event) {
-    const userName = document.querySelector(".active").textContent;
-    const userId = userInfo.get(userName);
-    const itemId = event.target.closest("li").id;
-    await fetch(`${BASE_URL}/api/users/${userId}/items/${itemId}/toggle`, form.completeTodoListForm())
-        .then(res => res.json());
-    userTodoList(userName);
+    if(event.target.className === "toggle") {
+        const userName = document.querySelector(".active").textContent;
+        const userId = userInfo.get(userName);
+        const itemId = event.target.closest("li").id;
+        await fetch(`${BASE_URL}/api/users/${userId}/items/${itemId}/toggle`, form.completeTodoListForm())
+            .then(res => res.json());
+        userTodoList(userName);
+    }
 }
+
+async function onDestroyItem(event) {
+    if(event.target.className === "destroy") {
+        const userName = document.querySelector(".active").textContent;
+        const userId = userInfo.get(userName);
+        const itemId = event.target.closest("li").id;
+        await fetch(`${BASE_URL}/api/users/${userId}/items/${itemId}`, form.destroyTodoListForm())
+            .then(res => res.json());
+        userTodoList(userName);
+    }
+}
+// async function onChangeContents(event) {
+//     const li = event.target.closest("li");
+//     const label = li.getElementsByClassName("label")[0];
+//     const editInput = li.getElementsByClassName("edit")[0];
+//     const originContents = label.innerText;
+//
+//     li.classList.toggle("editing");
+//
+//     // const userName = document.querySelector(".active").textContent;
+//     // const userId = userInfo.get(userName);
+//     // const itemId = event.target.closest("li").id;
+//     // await fetch(`${BASE_URL}/api/users/${userId}/items/${itemId}/toggle`, form.changeTodoListForm())
+//     //     .then(res => res.json());
+//     // userTodoList(userName);
+// }
 
 const silver = `<li>
               <div class="view">

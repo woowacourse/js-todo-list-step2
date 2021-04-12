@@ -60,3 +60,25 @@ export function completeTodoListForm() {
         }
     };
 }
+
+export function destroyTodoListForm() {
+    return {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+}
+
+export function changeTodoListForm(contents) {
+    const newContents = {
+        contents: contents
+    };
+    return {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(newContents)
+    };
+}
