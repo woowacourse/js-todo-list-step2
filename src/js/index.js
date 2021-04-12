@@ -1,11 +1,17 @@
 import createUser from './createUser.js';
 import loadUserItem from './loadUserItem.js';
 import deleteUser from './deleteUser.js';
+import addTodo from './addTodo.js';
 
 export default function App() {
   this.baseURL = "https://js-todo-list-9ca3a.df.r.appspot.com";
   this.userList = document.querySelector("#user-list");
   this.userListSection = document.querySelector("section");
+
+  this.createUser = new createUser(this.baseURL, this.renderUser);
+  this.deleteUser = new deleteUser(this.baseURL, this.renderUserList, this.userList);
+  this.loadUserItem = new loadUserItem(this.userList, this.baseURL);
+  this.addTodo = new addTodo(this.userList, this.baseURL, this.loadUserItem);
   
   this.renderUser = (user) => {
       const content = `<button class="ripple" id="${user._id}">${user.name}</button>`;
@@ -37,10 +43,6 @@ export default function App() {
       })
       .catch(err => alert(err));
   };
-
-  this.createUser = new createUser(this.baseURL, this.renderUser);
-  this.deleteUser = new deleteUser(this.baseURL, this.renderUserList, this.userList);
-  this.loadUserItem = new loadUserItem(this.userList, this.baseURL);
 }
 
 window.onload = () => {
