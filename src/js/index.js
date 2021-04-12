@@ -1,6 +1,13 @@
 const baseURL = 'https://js-todo-list-9ca3a.df.r.appspot.com';
-const $todoInput = document.querySelector(".new-todo");
-$todoInput.addEventListener("keyup", onAddTodoItem);
+
+const todoInput = document.querySelector(".new-todo");
+const userCreateButton = document.querySelector('.user-create-button');
+const userDeleteButton = document.querySelector('.user-delete-button');
+const $todoList = document.querySelector(".todo-list");
+
+todoInput.addEventListener("keyup", onAddTodoItem);
+userCreateButton.addEventListener('click', onUserCreateHandler);
+userDeleteButton.addEventListener('click', onUserDeleteHandler);
 
 let listCount;
 let userId;
@@ -100,7 +107,7 @@ async function onAddTodoItem(event) {
     if (todoTitle.length < 2) {
       alert('todo의 내용은 2글자 이상이어야 합니다.');
     } else {
-      await fetch(baseURL + '/api/users/' + userId + "/items", {
+      fetch(baseURL + '/api/users/' + userId + "/items", {
         method: 'POST',
         body: JSON.stringify({
           contents: todoTitle
@@ -109,8 +116,8 @@ async function onAddTodoItem(event) {
           'Content-Type': 'application/json'
         }
       }).then(res => res.json());
-      await getSelectedUserTodo(userId);
       event.target.value = "";
+      await getSelectedUserTodo(userId);
     }
   }
 }
@@ -118,10 +125,9 @@ async function onAddTodoItem(event) {
 async function onToggleTodoItem(event) {
   if(event.target.value === "on"){
     const itemId = event.target.closest("div").id;
-    const result = await fetch(baseURL + '/api/users/' + userId + "/items/" + itemId + "/toggle", {
+    await fetch(baseURL + '/api/users/' + userId + "/items/" + itemId + "/toggle", {
       method: 'PUT',
     }).then(res => res.json());
-    console.log(result)
     event.target.closest("input").classList.toggle("checked");
     event.target.closest("li").classList.toggle("completed");
   }
@@ -138,7 +144,6 @@ function onDoubleClickedItem(event) {
     if (innerEvent.key === 'Esc' || innerEvent.key === 'Escape') {
       updatedLi.classList.remove("editing");
     }
-
     if (innerEvent.key === 'Enter') {
       const result = await fetch(baseURL + '/api/users/' + userId + "/items/" + itemId, {
         method: 'PUT',
@@ -149,7 +154,6 @@ function onDoubleClickedItem(event) {
           'Content-Type': 'application/json'
         }
       }).then(res => res.json());
-
       updatedLi.classList.remove("editing");
       await getSelectedUserTodo(userId);
     }
@@ -186,11 +190,72 @@ function setCount(count) {
 
 getUsers();
 
-const userCreateButton = document.querySelector('.user-create-button')
-userCreateButton.addEventListener('click', onUserCreateHandler)
+let $all = document.querySelector(".all");
+let $completed = document.querySelector(".completed");
+let $notCompleted = document.querySelector(".active");
+let $deleteAll = document.querySelector(".clear-completed");
+$all.addEventListener('click', showAllItems);
+$completed.addEventListener('click', showCompletedItems);
+$notCompleted.addEventListener('click', showNotCompletedItems);
+$deleteAll.addEventListener('click', deleteAll);
 
-const userDeleteButton = document.querySelector('.user-delete-button')
-userDeleteButton.addEventListener('click', onUserDeleteHandler)
+function showAllItems() {
+  let count = 0;
+  const items = $todoList.querySelectorAll("li");
+  for(let item of items) {
+    item.style.display = "block";
+      count += 1;
+  }
+  setCount(count);
+}
 
-// const $todoList = document.querySelector("#todo-list");
-// $todoList.addEventListener("click", onToggleTodoItem);
+function showCompletedItems() {
+  $completed.classList.toggle("selected");
+  if($all.classList.contains("selected")) {
+    $all.classList.toggle("selected");
+  }
+  if($notCompleted.classList.contains("selected")) {
+    $notCompleted.classList.toggle("selected");
+  }
+
+  let count = 0;
+  const items = $todoList.querySelectorAll("li");
+  for(let item of items) {
+    if(item.classList.contains("completed")) {
+      item.style.display = "block";
+      count += 1;
+    } else {
+      item.style.display = "none";
+    }
+  }
+  setCount(count);
+}
+
+function showNotCompletedItems() {
+  $notCompleted.classList.toggle("selected");
+  if($all.classList.contains("selected")) {
+    $all.classList.toggle("selected");
+  }
+  if($completed.classList.contains("selected")) {
+    $completed.classList.toggle("selected");
+  }
+
+  let count = 0;
+  const items = $todoList.querySelectorAll("li");
+  for(let item of items) {
+    if(item.classList.contains("completed")) {
+      item.style.display = "none";
+    } else {
+      item.style.display = "block";
+      count += 1;
+    }
+  }
+  setCount(count);
+}
+
+async function deleteAll() {
+  await fetch(baseURL + '/api/users/' + userId + "/items/", {
+    method: 'DELETE',
+  }).then(res => res.json());
+  await getSelectedUserTodo(userId);
+}
