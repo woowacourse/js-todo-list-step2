@@ -14,7 +14,7 @@ $userItem.addEventListener('click', selectUser);
 todoInput.addEventListener('keyup', onAddTodoItem);
 $todoList.addEventListener('click', onCompleteTodoItem);
 $todoList.addEventListener('click', onDestroyItem);
-// todoList.addEventListener('dbclick', onChangeContents);
+$todoList.addEventListener('dblclick', onChangeContents);
 
 let userInfo = new Map();
 
@@ -196,22 +196,35 @@ async function onDestroyItem(event) {
         userTodoList(userName);
     }
 }
-// async function onChangeContents(event) {
-//     const li = event.target.closest("li");
-//     const label = li.getElementsByClassName("label")[0];
-//     const editInput = li.getElementsByClassName("edit")[0];
-//     const originContents = label.innerText;
-//
-//     li.classList.toggle("editing");
-//
-//     // const userName = document.querySelector(".active").textContent;
-//     // const userId = userInfo.get(userName);
-//     // const itemId = event.target.closest("li").id;
-//     // await fetch(`${BASE_URL}/api/users/${userId}/items/${itemId}/toggle`, form.changeTodoListForm())
-//     //     .then(res => res.json());
-//     // userTodoList(userName);
-// }
+async function onChangeContents(event) {
+    if(event.target.className === "label"){
+        const $TodoItem = event.target.closest('li');
+        const editInput = $TodoItem.querySelector('.edit');
+        console.log($TodoItem);
+        if(!$TodoItem.classList.contains('editing')) {
+            $TodoItem.classList.toggle('editing');
+        }
+        editInput.addEventListener('keyup', (e) => {
+            if(e.key === 'Enter') {
+                $TodoItem.classList.remove('editing')
+                edit(event, editInput.value);
+            }
+            if(e.key === 'Esc' || e.key === 'Escape') {
+                $TodoItem.classList.remove('editing')
+                return;
+            }
+        })
+    }
+}
 
+async function edit(event, newContents) {
+    const userName = document.querySelector(".active").textContent;
+    const userId = userInfo.get(userName);
+    const itemId = event.target.closest("li").id;
+    await fetch(`${BASE_URL}/api/users/${userId}/items/${itemId}`, form.changeTodoListForm(newContents))
+        .then(res => res.json());
+    userTodoList(userName);
+}
 const silver = `<li>
               <div class="view">
                 <label class="label">
