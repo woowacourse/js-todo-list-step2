@@ -72,10 +72,14 @@ async function getSelectedUserTodo(userId) {
       .then(data => updateTodos(data));
 }
 
-function makeTodo(content) {
-  return `<li>
-              <div class="view">
-                <input class="toggle" type="checkbox" />
+function makeTodo(content, id, liClass) {
+  let val = "";
+  if(liClass === "completed") {
+    val = "checked"
+  }
+  return `<li class=${liClass}>
+              <div class="view" id=${id}>
+                <input class="toggle" onclick="onToggleTodoItem(event)" type="checkbox" ${val}/>
                 <label class="label">
                   <select class="chip select">
                     <option value="0" selected>순위</option>
@@ -107,11 +111,55 @@ async function onAddTodoItem(event) {
   }
 }
 
+async function onToggleTodoItem(event) {
+  if(event.target.value === "on"){
+    const itemId = event.target.closest("div").id;
+    const result = await fetch(baseURL + '/api/users/' + userId + "/items/" + itemId + "/toggle", {
+      method: 'PUT',
+    }).then(res => res.json());
+    console.log(result)
+    event.target.closest("input").classList.toggle("checked");
+    event.target.closest("li").classList.toggle("completed");
+  }
+}
+
+function onDoubleClickedItem(event) {
+  let updatedLabel = event.target;
+
+  const updatedLi = updatedLabel.closest('li');
+  updatedLi.classList.add("editing");
+
+  let input = updatedLi.querySelector(".edit");
+  input.addEventListener('keydown', function (innerEvent) {
+    if (innerEvent.key === 'Esc' || innerEvent.key === 'Escape') {
+      updatedLi.classList.remove("editing");
+    }
+
+    if (innerEvent.key === 'Enter') {
+      event.target.textContent = input.value;
+      updatedLi.classList.remove("editing");
+    }
+  });
+}
+
+function onClickDeletedItem(deletedItem) {
+  const deleteDiv = deletedItem.parentNode;
+  const deleteItem = deleteDiv.parentNode;
+  const todoList = deleteItem.parentNode;
+  todoList.removeChild(deleteItem);
+  listCount -= 1;
+  setCount(listCount);
+}
+
 async function updateTodos(todo) {
   const todoListContent = document.querySelector('.todo-list');
   todoListContent.innerHTML = "";
   for(let i = 0; i < todo.todoList.length; i++) {
-    let todoItem = makeTodo(todo.todoList[i].contents);
+    let toggled = "";
+    if(todo.todoList[i].isCompleted) {
+      toggled = "completed"
+    }
+    let todoItem = makeTodo(todo.todoList[i].contents, todo.todoList[i]._id, toggled);
     todoListContent.insertAdjacentHTML('beforeend', todoItem);
   }
   setCount(todo.todoList.length);
@@ -130,3 +178,6 @@ userCreateButton.addEventListener('click', onUserCreateHandler)
 
 const userDeleteButton = document.querySelector('.user-delete-button')
 userDeleteButton.addEventListener('click', onUserDeleteHandler)
+
+// const $todoList = document.querySelector("#todo-list");
+// $todoList.addEventListener("click", onToggleTodoItem);
