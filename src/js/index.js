@@ -1,4 +1,5 @@
 import createUser from './createUser.js';
+import loadUserItem from './loadUserItem.js';
 
 export default function App() {
   this.baseURL = "https://js-todo-list-9ca3a.df.r.appspot.com";
@@ -25,11 +26,10 @@ export default function App() {
   };
 
   this.createUser = new createUser(this.userCreateButton, this.baseURL, this.renderUser);
+  this.loadUserItem = new loadUserItem(this.userList, this.baseURL);
 }
 
 window.onload = () => {
     const app = new App();
     app.renderUserList();
 }
-
-
