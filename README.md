@@ -40,16 +40,16 @@
 
 ## 🎯🎯 심화 요구사항
 
-- [ ] 1. fetch api 사용하는 부분을 async await을 사용하여 리팩토링하기.
+- [x] 1. fetch api 사용하는 부분을 async await을 사용하여 리팩토링하기.(필요한 부분만)
 - [ ] 2. github issue에서 라벨을 붙이는 것처럼, 우선순위에 따라서 label를 추가하기.
-- [ ] 3. ES6 impot & export를 이용해 자바스크립트 파일을 리팩토링하기.
+- [x] 3. ES6 impot & export를 이용해 자바스크립트 파일을 리팩토링하기.
 
 <br/>
 
 ## 🕵️‍♂️ 제약사항
 
-- [ ] 1. User의 이름은 최소 2글자 이상이어야 한다.
-- [ ] 2. TodoItem Contents는 최소 2글자 이상이어야 한다.
+- [x] 1. User의 이름은 최소 2글자 이상이어야 한다.
+- [x] 2. TodoItem Contents는 최소 2글자 이상이어야 한다.
 
 <br/>
 
