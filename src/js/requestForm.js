@@ -51,3 +51,12 @@ export function addTodoListForm(contents) {
         body: JSON.stringify(newContents)
     };
 }
+
+export function completeTodoListForm() {
+    return {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+}

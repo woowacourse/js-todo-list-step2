@@ -12,6 +12,7 @@ userCreateButton.addEventListener('click', onUserCreateHandler)
 userDeleteButton.addEventListener('click', onUserDeleteHandler)
 $userItem.addEventListener('click', selectUser);
 todoInput.addEventListener('keyup', onAddTodoItem);
+todoList.addEventListener('click', onCompleteTodoItem);
 
 let userInfo = new Map();
 let currentUserName;
@@ -172,6 +173,15 @@ function add(userName, contents) {
     const userId = userInfo.get(userName);
     fetch(`${BASE_URL}/api/users/${userId}/items/`, form.addTodoListForm(contents))
         .then(res => res.json());
+}
+
+async function onCompleteTodoItem(event) {
+    const userName = document.querySelector(".active").textContent;
+    const userId = userInfo.get(userName);
+    const itemId = event.target.closest("li").id;
+    await fetch(`${BASE_URL}/api/users/${userId}/items/${itemId}/toggle`, form.completeTodoListForm())
+        .then(res => res.json());
+    userTodoList(userName);
 }
 
 const silver = `<li>
