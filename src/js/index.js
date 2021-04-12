@@ -3,14 +3,18 @@ import * as form from "./requestForm.js";
 const BASE_URL = "https://js-todo-list-9ca3a.df.r.appspot.com";
 
 const userCreateButton = document.querySelector('.user-create-button')
-userCreateButton.addEventListener('click', onUserCreateHandler)
 const userDeleteButton = document.querySelector('.user-delete-button')
-userDeleteButton.addEventListener('click', onUserDeleteHandler)
 const $userItem = document.querySelector(".user-list");
-$userItem.addEventListener('click', selectUser);
 const todoList = document.querySelector(".todo-list");
+const todoInput = document.querySelector('.input-container')
+
+userCreateButton.addEventListener('click', onUserCreateHandler)
+userDeleteButton.addEventListener('click', onUserDeleteHandler)
+$userItem.addEventListener('click', selectUser);
+todoInput.addEventListener('keyup', onAddTodoItem);
 
 let userInfo = new Map();
+let currentUserName;
 
 allUsers();
 
@@ -90,22 +94,22 @@ function active(user) {
         user.classList.add("active");
         const userTitle = document.getElementById("user-title-name");
         userTitle.textContent = user.textContent;
+        currentUserName = userTitle.textContent;
     }
 
     return user.textContent;
 }
 
 async function userTodoList(userName) {
+    removeCurrentTodo();
     const userId = userInfo.get(userName);
     const todoListContents = await fetch(`${BASE_URL}/api/users/${userId}/items/`, form.getUserTodoListForm())
         .then(res => res.json());
-    removeCurrentTodo();
     todoList.insertAdjacentHTML("beforeend", silver)
     for (let i = 0; i < todoListContents.length; i++) {
         const content = todoListContents[i];
         todoList.insertAdjacentHTML("beforeend", todoItemForm(content));
     }
-    console.log(todoListContents)
 }
 
 function removeCurrentTodo() {
@@ -152,6 +156,22 @@ function getPriorityForm(priority) {
             <option value="2" selected>2순위</option>
         </select>`;
     }
+}
+
+function onAddTodoItem(event) {
+    const contents = event.target.value;
+    if (event.key === "Enter" && contents !== "") {
+        const userName = document.querySelector(".active").textContent;
+        add(userName, contents);
+        userTodoList(userName);
+        event.target.value = '';
+    }
+}
+
+function add(userName, contents) {
+    const userId = userInfo.get(userName);
+    fetch(`${BASE_URL}/api/users/${userId}/items/`, form.addTodoListForm(contents))
+        .then(res => res.json());
 }
 
 const silver = `<li>

@@ -39,11 +39,15 @@ export function getUserTodoListForm() {
     };
 }
 
-export function getUserForm() {
+export function addTodoListForm(contents) {
+    const newContents = {
+        contents: contents
+    };
     return {
-        method: 'GET',
+        method: 'POST',
         headers: {
             'Content-Type': 'application/json'
-        }
+        },
+        body: JSON.stringify(newContents)
     };
 }
