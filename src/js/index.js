@@ -1,4 +1,5 @@
 const baseURL = 'https://js-todo-list-9ca3a.df.r.appspot.com';
+let userId;
 
 async function onUserCreateHandler() {
   const userName = prompt("추가하고 싶은 이름을 입력해주세요.");
@@ -13,6 +14,7 @@ async function onUserCreateHandler() {
         'Content-Type': 'application/json'
       }
     }).then(res => res.json());
+    location.reload();
   } else {
     alert('이름은 2글자 이상이어야 합니다.');
   }
@@ -44,7 +46,16 @@ function onUserHandler(event) {
   document.querySelector(".active").classList.toggle("active");
   event.target.classList.toggle("active");
   document.querySelector("strong").innerText = event.target.innerText;
+  userId = event.target.id;
   getSelectedUserTodo(event.target.id);
+}
+
+async function onUserDeleteHandler() {
+  await fetch(baseURL + "/api/users/" + userId, {
+    method: 'DELETE'
+  }).then(alert('유저 삭제 완료'));
+  location.reload();
+  userId = null;
 }
 
 async function getSelectedUserTodo(userId) {
@@ -77,6 +88,7 @@ function makeTodo(content) {
 
 async function updateTodos(todo) {
   const todoListContent = document.querySelector('.todo-list');
+  todoListContent.innerHTML = "";
   for(let i = 0; i < todo.todoList.length; i++) {
     let todoItem = makeTodo(todo.todoList[i].contents);
     todoListContent.insertAdjacentHTML('beforeend', todoItem);
@@ -90,5 +102,9 @@ function setCount(index) {
 }
 
 getUsers();
+
 const userCreateButton = document.querySelector('.user-create-button')
 userCreateButton.addEventListener('click', onUserCreateHandler)
+
+const userDeleteButton = document.querySelector('.user-delete-button')
+userDeleteButton.addEventListener('click', onUserDeleteHandler)
