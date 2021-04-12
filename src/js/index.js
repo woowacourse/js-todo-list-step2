@@ -88,7 +88,7 @@ function makeTodo(content, id, liClass) {
                   </select>
                   ${content}
                 </label>
-                <button class="destroy"></button>
+                <button class="destroy" onclick="onClickDeletedItem(event)"></button>
               </div>
               <input class="edit" value=${content} />
             </li>`;
@@ -97,17 +97,21 @@ function makeTodo(content, id, liClass) {
 async function onAddTodoItem(event) {
   const todoTitle = event.target.value;
   if (event.key === "Enter" && todoTitle !== "") {
-    await fetch(baseURL + '/api/users/' + userId + "/items", {
-      method: 'POST',
-      body: JSON.stringify({
-        contents: todoTitle
-      }),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    }).then(res => res.json());
-    await getSelectedUserTodo(userId);
-    event.target.value = "";
+    if (todoTitle.length < 2) {
+      alert('todo의 내용은 2글자 이상이어야 합니다.');
+    } else {
+      await fetch(baseURL + '/api/users/' + userId + "/items", {
+        method: 'POST',
+        body: JSON.stringify({
+          contents: todoTitle
+        }),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(res => res.json());
+      await getSelectedUserTodo(userId);
+      event.target.value = "";
+    }
   }
 }
 
@@ -142,13 +146,12 @@ function onDoubleClickedItem(event) {
   });
 }
 
-function onClickDeletedItem(deletedItem) {
-  const deleteDiv = deletedItem.parentNode;
-  const deleteItem = deleteDiv.parentNode;
-  const todoList = deleteItem.parentNode;
-  todoList.removeChild(deleteItem);
-  listCount -= 1;
-  setCount(listCount);
+async function onClickDeletedItem(event) {
+  const itemId = event.target.closest("div").id;
+  await fetch(baseURL + '/api/users/' + userId + "/items/" + itemId, {
+    method: 'DELETE',
+  }).then(res => res.json())
+  await getSelectedUserTodo(userId);
 }
 
 async function updateTodos(todo) {
