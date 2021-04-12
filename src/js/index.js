@@ -162,6 +162,10 @@ function getPriorityForm(priority) {
 function onAddTodoItem(event) {
     const contents = event.target.value;
     if (event.key === "Enter" && contents !== "") {
+        if(contents.length < 2){
+            alert("내용은 두 글자 이상이여야 합니다.")
+            return;
+        }
         const userName = document.querySelector(".active").textContent;
         add(userName, contents);
         userTodoList(userName);
@@ -200,18 +204,21 @@ async function onChangeContents(event) {
     if(event.target.className === "label"){
         const $TodoItem = event.target.closest('li');
         const editInput = $TodoItem.querySelector('.edit');
-        console.log($TodoItem);
         if(!$TodoItem.classList.contains('editing')) {
             $TodoItem.classList.toggle('editing');
         }
         editInput.addEventListener('keyup', (e) => {
-            if(e.key === 'Enter') {
-                $TodoItem.classList.remove('editing')
-                edit(event, editInput.value);
-            }
             if(e.key === 'Esc' || e.key === 'Escape') {
                 $TodoItem.classList.remove('editing')
                 return;
+            }
+            if(editInput.value.length < 2) {
+                alert("내용은 두 글자 이상이여야 합니다.")
+                return;
+            }
+            if(e.key === 'Enter') {
+                $TodoItem.classList.remove('editing')
+                edit(event, editInput.value);
             }
         })
     }
