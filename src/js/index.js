@@ -1,4 +1,8 @@
 const baseURL = 'https://js-todo-list-9ca3a.df.r.appspot.com';
+const $todoInput = document.querySelector(".new-todo");
+$todoInput.addEventListener("keyup", onAddTodoItem);
+
+let listCount;
 let userId;
 
 async function onUserCreateHandler() {
@@ -86,6 +90,23 @@ function makeTodo(content) {
             </li>`;
 }
 
+async function onAddTodoItem(event) {
+  const todoTitle = event.target.value;
+  if (event.key === "Enter" && todoTitle !== "") {
+    await fetch(baseURL + '/api/users/' + userId + "/items", {
+      method: 'POST',
+      body: JSON.stringify({
+        contents: todoTitle
+      }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then(res => res.json());
+    await getSelectedUserTodo(userId);
+    event.target.value = "";
+  }
+}
+
 async function updateTodos(todo) {
   const todoListContent = document.querySelector('.todo-list');
   todoListContent.innerHTML = "";
@@ -96,9 +117,10 @@ async function updateTodos(todo) {
   setCount(todo.todoList.length);
 }
 
-function setCount(index) {
-  const listCount = document.getElementsByClassName("todo-count")[0].childNodes[1];
-  listCount.innerHTML = index;
+function setCount(count) {
+  const listContent = document.getElementsByClassName("todo-count")[0].childNodes[1];
+  listContent.innerHTML = count;
+  listCount = count;
 }
 
 getUsers();
