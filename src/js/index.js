@@ -32,6 +32,7 @@ userDeleteButton.addEventListener('click', onUserDeleteHandler)
 
 
 loadUsers();
+
 async function loadUsers() {
     const usersRes = await fetch(BASIC_URL + USERS)
     const users = await usersRes.json();
@@ -84,7 +85,8 @@ async function getTodoItem(userId) {
     const view_todo_list = document.querySelector('.todo-list');
     view_todo_list.innerHTML = ''
     for (let i = 0; i < todoList.length; i++) {
-        view_todo_list.innerHTML += generateTodoItem(todoList[i].contents)
+        let todoItem = todoList[i]
+        view_todo_list.innerHTML += generateTodoItem(todoItem._id, todoItem.contents, todoItem.isCompleted)
     }
 }
 
@@ -112,6 +114,22 @@ async function addTodoItem(userId, contents) {
     await getTodoItem(userId)
 }
 
+
+///api/users/:userId/items/:itemId/toggle
+
+async function toggleTodoItem(element) {
+    const selectedUser = document.querySelector('#user-list').querySelector('.active')
+    const userId = selectedUser.dataset.id
+    const itemId = element.parentElement.dataset.id
+    const li = element.parentElement.parentElement
+    const toggleRes = await fetch(`${BASIC_URL}${USERS}${userId}/items/${itemId}/toggle`, {
+        method: 'PUT',
+    })
+
+    li.classList.toggle('completed')
+
+}
+
 function generateUserItem(user, isActive) {
     if (isActive) {
         return `<button class='ripple active' data-id=${user._id} onClick=selectUser(this)>${user.name}</button>`
@@ -119,10 +137,10 @@ function generateUserItem(user, isActive) {
     return `<button class=ripple data-id=${user._id} onClick=selectUser(this)>${user.name}</button>`
 }
 
-function generateTodoItem(todoTitle) {
-    return `<li>
-              <div class="view">
-                <input class="toggle" type="checkbox" />
+function generateTodoItem(todoId, todoTitle, isCompleted) {
+    return `<li ${isCompleted ? "class=completed" : ""}>
+              <div class="view" data-id=${todoId}>
+                <input class="toggle" type="checkbox" onclick="toggleTodoItem(this)" />
                 <label class="label">
                   <select class="chip select">
                     <option value="0" selected>순위</option>
