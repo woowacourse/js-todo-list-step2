@@ -1,6 +1,9 @@
 const BASIC_URL = "https://js-todo-list-9ca3a.df.r.appspot.com";
 const USERS = "/api/users/";
 
+const input = document.querySelector('.new-todo')
+input.addEventListener('keyup', inputTodoItem)
+
 const onUserCreateHandler = () => {
     const userName = prompt("추가하고 싶은 이름을 입력해주세요.");
     addUser(userName);
@@ -29,7 +32,6 @@ userDeleteButton.addEventListener('click', onUserDeleteHandler)
 
 
 loadUsers();
-
 async function loadUsers() {
     const usersRes = await fetch(BASIC_URL + USERS)
     const users = await usersRes.json();
@@ -71,10 +73,14 @@ async function selectUser(element) {
 
     element.classList.add("active");
     const userId = element.dataset.id
-    const userRes = await fetch(`${BASIC_URL}${USERS}${userId}`)
-    const user = await userRes.json();
-    const todoList = user.todoList
+    await getTodoItem(userId)
+}
 
+async function getTodoItem(userId) {
+    const todoRes = await fetch(`${BASIC_URL}${USERS}${userId}/items/`)
+    const todoList = await todoRes.json();
+
+    console.log(todoList)
     const view_todo_list = document.querySelector('.todo-list');
     view_todo_list.innerHTML = ''
     for (let i = 0; i < todoList.length; i++) {
@@ -82,6 +88,29 @@ async function selectUser(element) {
     }
 }
 
+async function inputTodoItem(e) {
+    if (e.keyCode != 13) {
+        return
+    }
+    const selectedUser = document.getElementsByClassName('ripple active')[0];
+    const userId = selectedUser.dataset.id
+    const contents = document.querySelector('.new-todo').value;
+    await addTodoItem(userId, contents)
+}
+
+async function addTodoItem(userId, contents) {
+    await fetch(`${BASIC_URL}${USERS}${userId}/items/`, {
+        method: 'POST',
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            contents: contents
+        }),
+    })
+
+    await getTodoItem(userId)
+}
 
 function generateUserItem(user, isActive) {
     if (isActive) {
