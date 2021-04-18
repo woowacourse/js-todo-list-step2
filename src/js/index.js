@@ -31,7 +31,13 @@ const userDeleteButton = document.querySelector('.user-delete-button')
 userDeleteButton.addEventListener('click', onUserDeleteHandler)
 
 
-loadUsers();
+init();
+
+async function init() {
+    await loadUsers();
+    await getTodoItem(getCurrentUserId())
+}
+
 
 async function loadUsers() {
     const usersRes = await fetch(BASIC_URL + USERS)
