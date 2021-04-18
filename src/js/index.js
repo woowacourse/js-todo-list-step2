@@ -114,8 +114,6 @@ async function addTodoItem(userId, contents) {
 }
 
 
-///api/users/:userId/items/:itemId/toggle
-
 async function toggleTodoItem(element) {
     const userId = getCurrentUserId()
     const itemId = element.parentElement.dataset.id
@@ -136,6 +134,54 @@ async function deleteTodoItem(element) {
     await getTodoItem(userId)
 }
 
+async function changeToModifiable(element) {
+    if (element.classList.contains('editing')) {
+        return
+    }
+
+    element.classList.add('editing');
+    element.addEventListener('keydown', await modifyTodoInput(this));
+}
+
+
+function onKeyTodoItem(event) {
+    const parentElement = event.target.parentElement;
+    const element = event.target;
+    if (!parentElement.classList.contains('editing')) {
+        return
+    }
+    if (event.keyCode === 27) {
+        parentElement.classList.remove('editing');
+        return
+    }
+
+    if (event.keyCode === 13) {
+        const itemId = parentElement.firstElementChild.dataset.id;
+        console.log("itemId: " + itemId)
+        modifyTodoItem(itemId, element)
+    }
+}
+
+async function modifyTodoItem(itemId, element) {
+    const userId = getCurrentUserId()
+    const modRes = await fetch(`${BASIC_URL}${USERS}${userId}/items/${itemId}`, {
+        method: 'PUT',
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            'contents': "element.value",
+        }),
+    });
+
+    const parentElement = element.parentElement;
+    if (modRes.status === 200) {
+        const title = parentElement.firstElementChild.getElementsByClassName('label')[0];
+        title.innerHTML = element.value;
+    }
+    parentElement.classList.remove('editing');
+}
+
 function getCurrentUserId() {
     const selectedUser = document.getElementsByClassName('ripple active')[0];
     return selectedUser.dataset.id;
@@ -148,9 +194,11 @@ function generateUserItem(user, isActive) {
     return `<button class=ripple data-id=${user._id} onClick=selectUser(this)>${user.name}</button>`
 }
 
+
+
 function generateTodoItem(todoId, todoTitle, isCompleted) {
-    return `<li ${isCompleted ? "class=completed" : ""}>
-              <div class="view" data-id=${todoId}>
+    return `<li ${isCompleted ? "class=completed" : ""} ondblclick="changeToModifiable(this)" onkeydown="onKeyTodoItem(event)">
+              <div class="view" data-id=${todoId}">
                 <input class="toggle" type="checkbox" onclick="toggleTodoItem(this)" />
                 <label class="label">
                   <select class="chip select">
