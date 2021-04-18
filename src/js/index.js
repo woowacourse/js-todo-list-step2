@@ -91,11 +91,10 @@ async function getTodoItem(userId) {
 }
 
 async function inputTodoItem(e) {
-    if (e.keyCode != 13) {
+    if (e.keyCode !== 13) {
         return
     }
-    const selectedUser = document.getElementsByClassName('ripple active')[0];
-    const userId = selectedUser.dataset.id
+    const userId = getCurrentUserId()
     const contents = document.querySelector('.new-todo').value;
     await addTodoItem(userId, contents)
 }
@@ -118,16 +117,28 @@ async function addTodoItem(userId, contents) {
 ///api/users/:userId/items/:itemId/toggle
 
 async function toggleTodoItem(element) {
-    const selectedUser = document.querySelector('#user-list').querySelector('.active')
-    const userId = selectedUser.dataset.id
+    const userId = getCurrentUserId()
     const itemId = element.parentElement.dataset.id
     const li = element.parentElement.parentElement
-    const toggleRes = await fetch(`${BASIC_URL}${USERS}${userId}/items/${itemId}/toggle`, {
+    await fetch(`${BASIC_URL}${USERS}${userId}/items/${itemId}/toggle`, {
         method: 'PUT',
-    })
-
+    });
     li.classList.toggle('completed')
 
+}
+
+async function deleteTodoItem(element) {
+    const userId = getCurrentUserId()
+    const itemId = element.parentElement.dataset.id
+    await fetch(`${BASIC_URL}${USERS}${userId}/items/${itemId}`, {
+        method: 'DELETE',
+    });
+    await getTodoItem(userId)
+}
+
+function getCurrentUserId() {
+    const selectedUser = document.getElementsByClassName('ripple active')[0];
+    return selectedUser.dataset.id;
 }
 
 function generateUserItem(user, isActive) {
@@ -149,7 +160,7 @@ function generateTodoItem(todoId, todoTitle, isCompleted) {
                   </select>
                   ${todoTitle}
                 </label>
-                <button class="destroy"></button>
+                <button class="destroy" onclick="deleteTodoItem(this)"></button>
               </div>
               <input class="edit" value="완료된 타이틀" />
             </li>`
